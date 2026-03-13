@@ -5,7 +5,7 @@
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'fireworks_shop');
 define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_PASS', '');  // 若 root 需要密码，请在此填写（如：'your_password'）
 define('DB_CHARSET', 'utf8mb4');
 
 $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
