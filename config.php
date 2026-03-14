@@ -5,9 +5,9 @@
  */
 $dbConfig = [
     'host'     => 'localhost',
-    'dbname'   => 'u870568714_tgfirework',
-    'user'     => 'u870568714_tgfirework',
-    'password' => 'Tgfirework@996',
+    'dbname'   => 'fireworks_shop',
+    'user'     => 'root',
+    'password' => '',
     'charset'  => 'utf8mb4',
 ];
 
