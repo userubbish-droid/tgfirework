@@ -61,6 +61,7 @@ require_once 'includes/header.php';
         </div>
         <button type="submit" class="btn btn-primary">登录</button>
         <a href="<?php echo BASE_PATH; ?>register.php?<?php echo isset($_GET['from']) ? 'from='.urlencode($_GET['from']) : ''; ?>" class="btn" style="margin-left:0.5rem;">没有账号？去注册</a>
+        <a href="<?php echo BASE_PATH; ?>reset_password.php" style="display:block;margin-top:0.75rem;color:#666;font-size:0.9em;">忘记密码？</a>
     </form>
 </main>
 <?php require_once 'includes/footer.php'; ?>

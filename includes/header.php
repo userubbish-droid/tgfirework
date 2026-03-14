@@ -15,6 +15,7 @@
             <a href="<?php echo BASE_PATH; ?>cart.php" class="cart-link" id="cartLink">购物车</a>
             <?php if (!empty($_SESSION['customer_id'])): ?>
                 <a href="<?php echo BASE_PATH; ?>my_orders.php">我的订单</a>
+                <a href="<?php echo BASE_PATH; ?>change_password.php">修改密码</a>
                 <?php if (($_SESSION['customer_role'] ?? 'customer') === 'customer'): ?>
                     <a href="<?php echo BASE_PATH; ?>apply_agent.php">申请批发</a>
                 <?php elseif (($_SESSION['customer_role'] ?? '') === 'agent'): ?>

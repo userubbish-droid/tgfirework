@@ -23,14 +23,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
     $stock = (int)($_POST['stock'] ?? 0);
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     $image = null;
+    $video = null;
+    $uploadDir = __DIR__ . '/../uploads/';
+    if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
     if (!empty($_FILES['image']['name'])) {
         $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
         if (in_array($ext, ['jpg','jpeg','png','gif','webp'])) {
-            $uploadDir = __DIR__ . '/../uploads/';
-            if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
             $filename = 'p_' . time() . '_' . uniqid() . '.' . $ext;
             if (move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $filename)) {
                 $image = $filename;
+            }
+        }
+    }
+    if (!empty($_FILES['video']['name'])) {
+        $ext = strtolower(pathinfo($_FILES['video']['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, ['mp4','webm','mov','ogg'])) {
+            $filename = 'v_' . time() . '_' . uniqid() . '.' . $ext;
+            if (move_uploaded_file($_FILES['video']['tmp_name'], $uploadDir . $filename)) {
+                $video = $filename;
             }
         }
     }
@@ -38,12 +48,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
         $params = [$name, $category_id, $description, $price, $stock, $is_active];
         $sql = "UPDATE products SET name=?, category_id=?, description=?, price=?, stock=?, is_active=?";
         if ($image) { $sql .= ", image=?"; $params[] = $image; }
+        if ($video) { $sql .= ", video=?"; $params[] = $video; }
         $params[] = $id;
         $sql .= " WHERE id=?";
         $pdo->prepare($sql)->execute($params);
     } else {
-        $pdo->prepare("INSERT INTO products (name, category_id, description, price, stock, is_active, image) VALUES (?,?,?,?,?,?,?)")
-            ->execute([$name, $category_id, $description, $price, $stock, $is_active, $image]);
+        $pdo->prepare("INSERT INTO products (name, category_id, description, price, stock, is_active, image, video) VALUES (?,?,?,?,?,?,?,?)")
+            ->execute([$name, $category_id, $description, $price, $stock, $is_active, $image, $video]);
     }
     header('Location: products.php');
     exit;
@@ -117,8 +128,16 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
                 <div class="form-group">
                     <label>图片</label>
                     <input type="file" name="image" accept="image/*">
-                    <?php if ($product && $product['image']): ?>
+                    <?php if ($product && !empty($product['image'])): ?>
                         <p>当前：<img src="<?php echo BASE_PATH; ?>uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="" style="max-height:80px;"></p>
+                    <?php endif; ?>
+                </div>
+                <div class="form-group">
+                    <label>视频</label>
+                    <input type="file" name="video" accept="video/mp4,video/webm,video/quicktime,video/ogg">
+                    <span style="color:#666;font-size:0.9em;">支持 mp4、webm、mov、ogg</span>
+                    <?php if ($product && !empty($product['video'])): ?>
+                        <p>当前：<a href="<?php echo BASE_PATH; ?>uploads/<?php echo htmlspecialchars($product['video']); ?>" target="_blank"><?php echo htmlspecialchars($product['video']); ?></a></p>
                     <?php endif; ?>
                 </div>
                 <div class="form-group">

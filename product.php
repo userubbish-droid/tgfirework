@@ -16,7 +16,10 @@ require_once 'includes/header.php';
 <main>
     <div class="product-detail">
         <div>
-            <img src="<?php echo $product['image'] ? (BASE_PATH.'uploads/'.htmlspecialchars($product['image'])) : (BASE_PATH.'assets/img/placeholder.svg'); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23eee%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2216%22%3E暂无图片%3C/text%3E%3C/svg%3E';this.onerror=null;">
+            <?php if (!empty($product['video'])): ?>
+                <video src="<?php echo BASE_PATH; ?>uploads/<?php echo htmlspecialchars($product['video']); ?>" controls style="max-width:100%;max-height:400px;display:block;" poster="<?php echo $product['image'] ? (BASE_PATH.'uploads/'.htmlspecialchars($product['image'])) : ''; ?>">您的浏览器不支持视频播放。</video>
+            <?php endif; ?>
+            <img src="<?php echo !empty($product['image']) ? (BASE_PATH.'uploads/'.htmlspecialchars($product['image'])) : (BASE_PATH.'assets/img/placeholder.svg'); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23eee%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2216%22%3E暂无图片%3C/text%3E%3C/svg%3E';this.onerror=null;"<?php if (!empty($product['video'])): ?> style="display:none;"<?php endif; ?>>
         </div>
         <div class="meta">
             <h1><?php echo htmlspecialchars($product['name']); ?></h1>
