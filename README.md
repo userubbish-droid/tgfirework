@@ -25,7 +25,11 @@
    ```
    或在 phpMyAdmin 中执行 `install.sql`。
 
-3. 修改 `config.php`：填写数据库账号、密码；若站点不在子目录 `/tg`，可把 `SITE_URL` 改为 `''`。
+3. **数据库连接（解决「数据库连接失败 / Access denied」）**  
+   线上环境建议用本地配置，不把密码写进版本库：
+   - 复制 `config.local.example.php` 为 `config.local.php`
+   - 在 `config.local.php` 里填写主机、数据库名、用户名、**密码**（多数主机要求 root 或分配用户必须带密码）
+   - 若站点在根目录，可在 `config.local.php` 里增加 `'site_url' => ''`（需在 config.php 里用该值覆盖 SITE_URL，当前示例未写可后续加）
 
 4. 确保 `uploads/` 目录可写（商品图片上传）。
 
