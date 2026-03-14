@@ -78,12 +78,12 @@ if (!empty($_SESSION['customer_id'])) {
     <h2>确认订单</h2>
     <form method="post" action="" id="checkoutForm">
         <input type="hidden" name="cart_json" id="cartJson" value="">
-        <div class="form-group">
-            <label>配送方式 *</label>
+        <div class="form-group delivery-method-wrap">
+            <label class="form-label">配送方式 *</label>
             <div class="delivery-options-row">
-                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="self_pickup" required> 自取</label>
-                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="lalamove"> Lalamove</label>
-                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="mail"> 邮寄</label>
+                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="self_pickup" required> <span>自取</span></label>
+                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="lalamove"> <span>Lalamove</span></label>
+                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="mail"> <span>邮寄</span></label>
             </div>
         </div>
         <div class="form-group">
@@ -111,6 +111,19 @@ if (!empty($_SESSION['customer_id'])) {
     var cart=JSON.parse(localStorage.getItem('cart')||'[]');
     document.getElementById('cartJson').value=JSON.stringify(cart);
     if(cart.length===0){ alert('购物车为空'); location.href='<?php echo BASE_PATH; ?>cart.php'; }
+})();
+(function(){
+    var row = document.querySelector('.delivery-options-row');
+    if(!row) return;
+    var labels = row.querySelectorAll('.delivery-option-btn');
+    function updateSelected(){
+        labels.forEach(function(lab){ lab.classList.remove('delivery-selected'); });
+        var checked = row.querySelector('input[name="delivery_type"]:checked');
+        if(checked && checked.closest) (checked.closest('.delivery-option-btn')||{}).classList.add('delivery-selected');
+    }
+    row.addEventListener('change', updateSelected);
+    row.addEventListener('click', function(e){ setTimeout(updateSelected, 0); });
+    updateSelected();
 })();
 </script>
 <?php require_once 'includes/footer.php'; ?>

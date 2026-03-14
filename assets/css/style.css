@@ -211,6 +211,7 @@ main {
 .btn-primary:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); }
 
 /* 配送方式：图2 风格 - 圆角青绿按钮排成一行 */
+.delivery-method-wrap .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
 .delivery-options-row {
     display: flex;
     flex-wrap: wrap;
@@ -218,32 +219,41 @@ main {
     align-items: center;
 }
 .delivery-option-btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 1.25rem;
-    background: linear-gradient(180deg, #9ccc65 0%, #8bc34a 50%, #7cb342 100%);
-    color: #333;
+    min-width: 6rem;
+    padding: 0.55rem 1.35rem;
+    background: linear-gradient(180deg, #9ccc65 0%, #8bc34a 50%, #7cb342 100%) !important;
+    color: #333 !important;
     font-weight: 500;
     border-radius: 999px;
     cursor: pointer;
     border: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.25);
-    transition: box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: box-shadow 0.2s, transform 0.15s, background 0.2s, color 0.2s;
 }
 .delivery-option-btn:hover {
-    box-shadow: 0 3px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.35);
     transform: translateY(-1px);
 }
 .delivery-option-btn input {
     position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
     opacity: 0;
-    width: 0;
-    height: 0;
+    cursor: pointer;
 }
+.delivery-option-btn span { position: relative; z-index: 1; pointer-events: none; }
+/* 选中：深绿 + 白字（兼容所有浏览器，由 JS 加 .delivery-selected） */
+.delivery-option-btn.delivery-selected,
 .delivery-option-btn:has(input:checked) {
-    background: linear-gradient(180deg, #689f38 0%, #558b2f 50%, #33691e 100%);
-    color: #fff;
+    background: linear-gradient(180deg, #689f38 0%, #558b2f 50%, #33691e 100%) !important;
+    color: #fff !important;
     box-shadow: 0 2px 6px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 .delivery-option { display: inline-block; margin-right: 1rem; margin-bottom: 0.3rem; font-weight: 500; }
