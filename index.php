@@ -2,23 +2,31 @@
 require_once 'config.php';
 session_start();
 
-$stmt = $pdo->query("SELECT id, name FROM categories ORDER BY sort_order, id");
-$categories = $stmt->fetchAll();
+try {
+    $stmt = $pdo->query("SELECT id, name FROM categories ORDER BY sort_order, id");
+    $categories = $stmt->fetchAll();
 
-$category_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
-$sql = "SELECT p.id, p.name, p.price, p.stock, p.image, c.name AS category_name 
-        FROM products p 
-        LEFT JOIN categories c ON p.category_id = c.id 
-        WHERE p.is_active = 1 AND p.stock > 0";
-$params = [];
-if ($category_id) {
-    $sql .= " AND p.category_id = ?";
-    $params[] = $category_id;
+    $category_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
+    $sql = "SELECT p.id, p.name, p.price, p.stock, p.image, c.name AS category_name 
+            FROM products p 
+            LEFT JOIN categories c ON p.category_id = c.id 
+            WHERE p.is_active = 1 AND p.stock > 0";
+    $params = [];
+    if ($category_id) {
+        $sql .= " AND p.category_id = ?";
+        $params[] = $category_id;
+    }
+    $sql .= " ORDER BY p.created_at DESC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $products = $stmt->fetchAll();
+} catch (PDOException $e) {
+    $msg = $e->getMessage();
+    if (strpos($msg, 'doesn\'t exist') !== false || strpos($msg, '1146') !== false) {
+        die('数据库表未创建。请在 phpMyAdmin 中导入 install.sql 创建表结构。错误参考：' . htmlspecialchars($msg));
+    }
+    throw $e;
 }
-$sql .= " ORDER BY p.created_at DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$products = $stmt->fetchAll();
 
 $pageTitle = '首页 - 烟花网购';
 require_once 'includes/header.php';
