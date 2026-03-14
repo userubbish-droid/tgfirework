@@ -54,6 +54,17 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
+-- 按 Agent 按商品的特别回扣：某 Agent 某商品用此回扣，否则用该 Agent 的默认回扣
+CREATE TABLE IF NOT EXISTS agent_product_rebate (
+    customer_id INT NOT NULL COMMENT 'Agent 客户 id',
+    product_id INT NOT NULL,
+    rebate_piece DECIMAL(10,2) DEFAULT NULL COMMENT '件价特别回扣',
+    rebate_box DECIMAL(10,2) DEFAULT NULL COMMENT '箱价特别回扣',
+    PRIMARY KEY (customer_id, product_id),
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE
+);
+
 -- 配送方式全局开关与开放时间（可选）
 CREATE TABLE IF NOT EXISTS settings (
     id INT AUTO_INCREMENT PRIMARY KEY,

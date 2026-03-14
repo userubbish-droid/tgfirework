@@ -28,6 +28,20 @@ try {
     throw $e;
 }
 
+$agent_rebate_map = [];
+if (!empty($products) && isset($_SESSION['customer_id'], $_SESSION['customer_role']) && $_SESSION['customer_role'] === 'agent') {
+    try {
+        $pids = array_column($products, 'id');
+        $placeholders = implode(',', array_fill(0, count($pids), '?'));
+        $stmt = $pdo->prepare("SELECT product_id, rebate_piece FROM agent_product_rebate WHERE customer_id = ? AND product_id IN ($placeholders)");
+        $stmt->execute(array_merge([$_SESSION['customer_id']], $pids));
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            if (isset($row['rebate_piece']) && $row['rebate_piece'] !== null && $row['rebate_piece'] !== '') {
+                $agent_rebate_map[(int)$row['product_id']] = (float)$row['rebate_piece'];
+            }
+        }
+    } catch (Exception $e) {}
+}
 $pageTitle = '首页 - 烟花网购';
 require_once 'includes/header.php';
 ?>
@@ -53,8 +67,8 @@ require_once 'includes/header.php';
                 $isAgent = isset($_SESSION['customer_role']) && $_SESSION['customer_role'] === 'agent';
                 $rebate = 0;
                 if ($isAgent) {
-                    if (isset($p['agent_rebate']) && $p['agent_rebate'] !== null && $p['agent_rebate'] !== '') {
-                        $rebate = (float)$p['agent_rebate'];
+                    if (isset($agent_rebate_map[$p['id']]) && $agent_rebate_map[$p['id']] > 0) {
+                        $rebate = $agent_rebate_map[$p['id']];
                     } elseif (isset($_SESSION['agent_default_rebate']) && $_SESSION['agent_default_rebate'] !== null) {
                         $rebate = (float)$_SESSION['agent_default_rebate'];
                     }

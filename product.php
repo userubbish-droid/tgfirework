@@ -16,15 +16,22 @@ $is_agent = isset($_SESSION['customer_role']) && $_SESSION['customer_role'] === 
 $rebate = 0;
 $rebate_box = 0;
 if ($is_agent) {
-    if (isset($product['agent_rebate']) && $product['agent_rebate'] !== null && $product['agent_rebate'] !== '') {
-        $rebate = (float)$product['agent_rebate'];
-    } elseif (isset($_SESSION['agent_default_rebate']) && $_SESSION['agent_default_rebate'] !== null) {
-        $rebate = (float)$_SESSION['agent_default_rebate'];
-    }
-    if (isset($product['agent_rebate_box']) && $product['agent_rebate_box'] !== null && $product['agent_rebate_box'] !== '') {
-        $rebate_box = (float)$product['agent_rebate_box'];
-    } elseif (isset($_SESSION['agent_default_rebate']) && $_SESSION['agent_default_rebate'] !== null) {
-        $rebate_box = (float)$_SESSION['agent_default_rebate'];
+    $def = $_SESSION['agent_default_rebate'] ?? null;
+    $def = $def !== null ? (float)$def : 0;
+    try {
+        $sr = $pdo->prepare("SELECT rebate_piece, rebate_box FROM agent_product_rebate WHERE customer_id = ? AND product_id = ?");
+        $sr->execute([$_SESSION['customer_id'], $product['id']]);
+        $special = $sr->fetch(PDO::FETCH_ASSOC);
+        if ($special) {
+            $rebate = (isset($special['rebate_piece']) && $special['rebate_piece'] !== null && $special['rebate_piece'] !== '') ? (float)$special['rebate_piece'] : $def;
+            $rebate_box = (isset($special['rebate_box']) && $special['rebate_box'] !== null && $special['rebate_box'] !== '') ? (float)$special['rebate_box'] : $def;
+        } else {
+            $rebate = $def;
+            $rebate_box = $def;
+        }
+    } catch (Exception $e) {
+        $rebate = $def;
+        $rebate_box = $def;
     }
 }
 $price_piece = (float)$product['price'];

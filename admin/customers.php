@@ -200,6 +200,8 @@ if ($hasAgentStatus) {
                                 <?php if (($c['role'] ?? '') === 'customer'): ?>
                                     <a href="?set_role=agent&id=<?php echo $c['id']; ?>" onclick="return confirm('确认为该客户提升为 Agent(批发)？');">提升为 Agent</a>
                                 <?php else: ?>
+                                    <a href="agent_rebate.php?agent_id=<?php echo (int)$c['id']; ?>">设特别回扣</a>
+                                    <span style="margin:0 0.25rem;">|</span>
                                     <a href="?set_role=customer&id=<?php echo $c['id']; ?>" onclick="return confirm('确认为该客户改为普通客户？');">改为普通客户</a>
                                 <?php endif; ?>
                             <?php else: ?>—<?php endif; ?>
