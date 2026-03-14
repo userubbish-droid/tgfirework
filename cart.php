@@ -8,7 +8,7 @@ require_once 'includes/header.php';
 <main>
     <h2>购物车</h2>
     <div id="cartContent">
-        <p class="cart-empty">购物车为空，<a href="<?php echo SITE_URL; ?>/index.php">去选购</a></p>
+        <p class="cart-empty">购物车为空，<a href="<?php echo BASE_PATH; ?>index.php">去选购</a></p>
     </div>
     <div id="cartTableWrap" style="display:none;">
         <table class="cart-table">
@@ -19,8 +19,8 @@ require_once 'includes/header.php';
         </table>
         <div class="cart-total">合计：<strong id="totalPrice">¥ 0.00</strong></div>
         <p style="margin-top:1rem;">
-            <a href="<?php echo SITE_URL; ?>/checkout.php" class="btn btn-primary">去结算</a>
-            <a href="<?php echo SITE_URL; ?>/index.php" class="btn" style="margin-left:0.5rem;">继续购物</a>
+            <a href="<?php echo BASE_PATH; ?>checkout.php" class="btn btn-primary">去结算</a>
+            <a href="<?php echo BASE_PATH; ?>index.php" class="btn" style="margin-left:0.5rem;">继续购物</a>
         </p>
     </div>
 </main>

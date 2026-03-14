@@ -2,7 +2,7 @@
 require_once 'config.php';
 session_start();
 if (isset($_SESSION['customer_id'])) {
-    header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'index.php');
+    header('Location: ' . BASE_PATH . 'index.php');
     exit;
 }
 
@@ -38,9 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['customer_name'] = $name;
             $to = isset($_GET['from']) ? $_GET['from'] : 'index';
             if ($to === 'checkout') {
-                header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'checkout.php');
+                header('Location: ' . BASE_PATH . 'checkout.php');
             } else {
-                header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'index.php');
+                header('Location: ' . BASE_PATH . 'index.php');
             }
             exit;
         }
@@ -73,7 +73,7 @@ require_once 'includes/header.php';
             <input type="text" name="phone" value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>" placeholder="选填">
         </div>
         <button type="submit" class="btn btn-primary">注册</button>
-        <a href="<?php echo SITE_URL ? SITE_URL.'/login.php' : 'login.php'; ?>?<?php echo isset($_GET['from']) ? 'from='.urlencode($_GET['from']) : ''; ?>" class="btn" style="margin-left:0.5rem;">已有账号？去登录</a>
+        <a href="<?php echo BASE_PATH; ?>login.php?<?php echo isset($_GET['from']) ? 'from='.urlencode($_GET['from']) : ''; ?>" class="btn" style="margin-left:0.5rem;">已有账号？去登录</a>
     </form>
 </main>
 <?php require_once 'includes/footer.php'; ?>

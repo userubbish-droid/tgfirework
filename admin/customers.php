@@ -80,8 +80,8 @@ if ($hasAgentStatus) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>客户管理 - 烟花网购后台</title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/admin.css">
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/admin.css">
 </head>
 <body>
 <div class="admin-layout">
@@ -91,7 +91,7 @@ if ($hasAgentStatus) {
         <a href="products.php">商品管理</a>
         <a href="orders.php">订单管理</a>
         <a href="customers.php" class="active">客户管理</a>
-        <a href="<?php echo SITE_URL; ?>/index.php" target="_blank">访问前台</a>
+        <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
         <a href="logout.php">退出登录</a>
     </aside>
     <main class="admin-main">

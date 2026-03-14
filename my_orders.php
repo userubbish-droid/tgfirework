@@ -2,7 +2,7 @@
 require_once 'config.php';
 session_start();
 if (!isset($_SESSION['customer_id'])) {
-    header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'login.php?from=my_orders');
+    header('Location: ' . BASE_PATH . 'login.php?from=my_orders');
     exit;
 }
 
@@ -18,7 +18,7 @@ require_once 'includes/header.php';
 <main>
     <h2>我的订单</h2>
     <?php if (empty($orders)): ?>
-        <p class="cart-empty">暂无订单，<a href="<?php echo SITE_URL ? SITE_URL.'/' : ''; ?>index.php">去选购</a></p>
+        <p class="cart-empty">暂无订单，<a href="<?php echo BASE_PATH; ?>index.php">去选购</a></p>
     <?php else: ?>
         <table class="cart-table">
             <thead>
@@ -37,7 +37,7 @@ require_once 'includes/header.php';
                     <td>¥ <?php echo number_format($o['total_amount'], 2); ?></td>
                     <td><?php echo $statusText[$o['status']] ?? $o['status']; ?></td>
                     <td><?php echo $o['created_at']; ?></td>
-                    <td><a href="<?php echo SITE_URL ? SITE_URL.'/' : ''; ?>order_detail.php?id=<?php echo $o['id']; ?>">查看详情</a></td>
+                    <td><a href="<?php echo BASE_PATH; ?>order_detail.php?id=<?php echo $o['id']; ?>">查看详情</a></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

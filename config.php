@@ -35,6 +35,8 @@ try {
 }
 
 if (!defined('SITE_URL')) {
-    define('SITE_URL', isset($dbConfig['site_url']) ? $dbConfig['site_url'] : '/tg');
+    define('SITE_URL', isset($dbConfig['site_url']) ? $dbConfig['site_url'] : '');
 }
+// 根目录时 BASE_PATH='/'; 子目录时 BASE_PATH='/tg/'，所有链接用 BASE_PATH.'xxx.php'
+define('BASE_PATH', SITE_URL !== '' ? rtrim(SITE_URL, '/') . '/' : '/');
 define('ADMIN_URL', SITE_URL . '/admin');

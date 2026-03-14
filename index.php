@@ -52,7 +52,7 @@ require_once 'includes/header.php';
             <?php foreach ($products as $p): ?>
                 <div class="product-card">
                     <a href="product.php?id=<?php echo $p['id']; ?>">
-                        <img src="<?php echo $p['image'] ? (SITE_URL.'/uploads/'.htmlspecialchars($p['image'])) : (SITE_URL ? SITE_URL.'/assets/img/placeholder.svg' : '/assets/img/placeholder.svg'); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23eee%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2216%22%3E暂无图片%3C/text%3E%3C/svg%3E';this.onerror=null;">
+                        <img src="<?php echo $p['image'] ? (BASE_PATH.'uploads/'.htmlspecialchars($p['image'])) : (BASE_PATH.'assets/img/placeholder.svg'); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23eee%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2216%22%3E暂无图片%3C/text%3E%3C/svg%3E';this.onerror=null;">
                     </a>
                     <div class="info">
                         <div class="name"><?php echo htmlspecialchars($p['name']); ?></div>

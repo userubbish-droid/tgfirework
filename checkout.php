@@ -2,7 +2,7 @@
 require_once 'config.php';
 session_start();
 if (!isset($_SESSION['customer_id'])) {
-    header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'login.php?from=checkout');
+    header('Location: ' . BASE_PATH . 'login.php?from=checkout');
     exit;
 }
 
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $pdo->commit();
             echo '<div class="alert alert-success">下单成功！订单号：' . htmlspecialchars($orderNo) . '</div>';
-            echo '<p><a href="' . (SITE_URL ? SITE_URL . '/' : '') . 'index.php" class="btn btn-primary">返回首页</a></p>';
+            echo '<p><a href="' . BASE_PATH . 'index.php" class="btn btn-primary">返回首页</a></p>';
             echo '<script>localStorage.removeItem("cart");</script>';
             require_once 'includes/footer.php';
             exit;
@@ -74,14 +74,14 @@ if (!empty($_SESSION['customer_id'])) {
             <textarea name="remark" placeholder="选填"></textarea>
         </div>
         <button type="submit" class="btn btn-primary">提交订单</button>
-        <a href="<?php echo SITE_URL; ?>/cart.php" class="btn" style="margin-left:0.5rem;">返回购物车</a>
+        <a href="<?php echo BASE_PATH; ?>cart.php" class="btn" style="margin-left:0.5rem;">返回购物车</a>
     </form>
 </main>
 <script>
 (function(){
     var cart=JSON.parse(localStorage.getItem('cart')||'[]');
     document.getElementById('cartJson').value=JSON.stringify(cart);
-    if(cart.length===0){ alert('购物车为空'); location.href='<?php echo SITE_URL; ?>/cart.php'; }
+    if(cart.length===0){ alert('购物车为空'); location.href='<?php echo BASE_PATH; ?>cart.php'; }
 })();
 </script>
 <?php require_once 'includes/footer.php'; ?>

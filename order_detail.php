@@ -2,7 +2,7 @@
 require_once 'config.php';
 session_start();
 if (!isset($_SESSION['customer_id'])) {
-    header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'login.php?from=order_detail');
+    header('Location: ' . BASE_PATH . 'login.php?from=order_detail');
     exit;
 }
 
@@ -48,6 +48,6 @@ require_once 'includes/header.php';
         </tbody>
     </table>
     <p class="cart-total">订单总额：<strong>¥ <?php echo number_format($order['total_amount'], 2); ?></strong></p>
-    <p><a href="<?php echo SITE_URL ? SITE_URL.'/' : ''; ?>my_orders.php" class="btn">返回订单列表</a></p>
+    <p><a href="<?php echo BASE_PATH; ?>my_orders.php" class="btn">返回订单列表</a></p>
 </main>
 <?php require_once 'includes/footer.php'; ?>

@@ -65,8 +65,8 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品管理 - 烟花网购后台</title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/admin.css">
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/admin.css">
 </head>
 <body>
 <div class="admin-layout">
@@ -76,7 +76,7 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
         <a href="products.php" class="active">商品管理</a>
         <a href="orders.php">订单管理</a>
         <a href="customers.php">客户管理</a>
-        <a href="<?php echo SITE_URL; ?>/index.php" target="_blank">访问前台</a>
+        <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
         <a href="logout.php">退出登录</a>
     </aside>
     <main class="admin-main">
@@ -117,7 +117,7 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
                     <label>图片</label>
                     <input type="file" name="image" accept="image/*">
                     <?php if ($product && $product['image']): ?>
-                        <p>当前：<img src="<?php echo SITE_URL; ?>/uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="" style="max-height:80px;"></p>
+                        <p>当前：<img src="<?php echo BASE_PATH; ?>uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="" style="max-height:80px;"></p>
                     <?php endif; ?>
                 </div>
                 <div class="form-group">

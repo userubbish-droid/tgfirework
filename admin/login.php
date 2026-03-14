@@ -31,8 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>后台登录 - 烟花网购</title>
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/style.css">
-    <link rel="stylesheet" href="<?php echo SITE_URL; ?>/assets/css/admin.css">
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/style.css">
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/admin.css">
 </head>
 <body class="admin-body">
 <div class="login-box">
@@ -50,7 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <button type="submit" class="btn btn-primary btn-block">登录</button>
     </form>
-    <p class="login-footer"><a href="<?php echo SITE_URL; ?>/index.php">返回前台</a></p>
+    <p class="login-footer"><a href="<?php echo BASE_PATH; ?>index.php">返回前台</a></p>
 </div>
 </body>
 </html>

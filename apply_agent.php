@@ -2,11 +2,10 @@
 require_once 'config.php';
 session_start();
 if (!isset($_SESSION['customer_id'])) {
-    header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'login.php?from=apply_agent');
+    header('Location: ' . BASE_PATH . 'login.php?from=apply_agent');
     exit;
 }
 
-$base = SITE_URL ? SITE_URL . '/' : '';
 $msg = '';
 $stmt = $pdo->prepare("SELECT id, role, agent_status FROM customers WHERE id = ?");
 $stmt->execute([$_SESSION['customer_id']]);
@@ -48,6 +47,6 @@ require_once 'includes/header.php';
     <?php else: ?>
         <p>您已是批发客户。</p>
     <?php endif; ?>
-    <p style="margin-top:1rem;"><a href="<?php echo $base; ?>index.php" class="btn">返回首页</a></p>
+    <p style="margin-top:1rem;"><a href="<?php echo BASE_PATH; ?>index.php" class="btn">返回首页</a></p>
 </main>
 <?php require_once 'includes/footer.php'; ?>
