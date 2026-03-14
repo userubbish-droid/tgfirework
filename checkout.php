@@ -91,7 +91,7 @@ if (!empty($_SESSION['customer_id'])) {
     <form method="post" action="" id="checkoutForm">
         <input type="hidden" name="cart_json" id="cartJson" value="">
         <div class="delivery-radio-hidden" aria-hidden="true">
-            <input type="radio" name="delivery_type" id="delivery_self_pickup" value="self_pickup" required tabindex="-1">
+            <input type="radio" name="delivery_type" id="delivery_self_pickup" value="self_pickup" tabindex="-1">
             <input type="radio" name="delivery_type" id="delivery_lalamove" value="lalamove" tabindex="-1">
             <input type="radio" name="delivery_type" id="delivery_mail" value="mail" tabindex="-1">
         </div>
@@ -153,6 +153,14 @@ if (!empty($_SESSION['customer_id'])) {
     });
     radios.forEach(function(r){ r.addEventListener('change', syncFromRadio); });
     syncFromRadio();
+    form.addEventListener('submit', function(e){
+        var checked = form.querySelector('input[name="delivery_type"]:checked');
+        if(!checked){
+            e.preventDefault();
+            alert('请选择配送方式');
+            return false;
+        }
+    });
 })();
 </script>
 <?php require_once 'includes/footer.php'; ?>
