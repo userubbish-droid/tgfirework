@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'includes/delivery_helpers.php';
 session_start();
 if (!isset($_SESSION['customer_id'])) {
     header('Location: ' . BASE_PATH . 'login.php?from=checkout');
@@ -7,6 +8,7 @@ if (!isset($_SESSION['customer_id'])) {
 }
 
 $pageTitle = '确认订单 - 烟花网购';
+$deliveryLabels = ['self_pickup' => '自取', 'lalamove' => 'Lalamove', 'mail' => '邮寄'];
 require_once 'includes/header.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -14,17 +16,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = trim($_POST['customer_phone'] ?? '');
     $address = trim($_POST['customer_address'] ?? '');
     $remark = trim($_POST['remark'] ?? '');
+    $deliveryType = trim($_POST['delivery_type'] ?? '');
     $cart = json_decode($_POST['cart_json'] ?? '[]', true);
-    if (!$name || !$phone || !$address || !is_array($cart) || empty($cart)) {
-        echo '<div class="alert alert-error">请填写完整信息且购物车不能为空。</div>';
+    $productIds = array_map(function($i) { return (int)($i['id'] ?? 0); }, is_array($cart) ? $cart : []);
+    $productIds = array_filter($productIds);
+    $allowedDelivery = getAllowedDeliveryTypes($pdo, $productIds);
+    if (!$name || !$phone || !is_array($cart) || empty($cart)) {
+        echo '<div class="alert alert-error">请填写收货人、电话且购物车不能为空。</div>';
+    } elseif (!in_array($deliveryType, $allowedDelivery, true)) {
+        echo '<div class="alert alert-error">请选择有效的配送方式。</div>';
+    } elseif ($deliveryType !== 'self_pickup' && $address === '') {
+        echo '<div class="alert alert-error">选择 Lalamove 或邮寄时请填写收货地址。</div>';
     } else {
         $orderNo = 'FW' . date('YmdHis') . rand(100, 999);
         $total = 0;
         foreach ($cart as $item) $total += ($item['price']??0) * ($item['quantity']??1);
+        $addressVal = $deliveryType === 'self_pickup' ? ($address !== '' ? $address : '自取') : $address;
         $pdo->beginTransaction();
         try {
-            $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, total_amount, remark) VALUES (?,?,?,?,?,?,?)")
-                ->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $address, $total, $remark]);
+            $stmt = $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, delivery_type, total_amount, remark) VALUES (?,?,?,?,?,?,?,?)");
+            $stmt->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $addressVal, $deliveryType ?: null, $total, $remark]);
             $orderId = $pdo->lastInsertId();
             $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) VALUES (?,?,?,?,?,?)");
             foreach ($cart as $item) {

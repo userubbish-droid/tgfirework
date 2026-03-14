@@ -22,6 +22,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
     $price = (float)($_POST['price'] ?? 0);
     $stock = (int)($_POST['stock'] ?? 0);
     $is_active = isset($_POST['is_active']) ? 1 : 0;
+    $allow_self_pickup = isset($_POST['allow_self_pickup']) ? 1 : 0;
+    $allow_lalamove = isset($_POST['allow_lalamove']) ? 1 : 0;
+    $allow_mail = isset($_POST['allow_mail']) ? 1 : 0;
     $image = null;
     $video = null;
     $uploadDir = __DIR__ . '/../uploads/';
@@ -44,17 +47,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
             }
         }
     }
+    $hasDeliveryCols = false;
+    try {
+        $cols = $pdo->query("SHOW COLUMNS FROM products")->fetchAll(PDO::FETCH_COLUMN);
+        $hasDeliveryCols = in_array('allow_self_pickup', $cols);
+    } catch (Exception $e) {}
     if ($action === 'edit' && $id) {
         $params = [$name, $category_id, $description, $price, $stock, $is_active];
         $sql = "UPDATE products SET name=?, category_id=?, description=?, price=?, stock=?, is_active=?";
         if ($image) { $sql .= ", image=?"; $params[] = $image; }
         if ($video) { $sql .= ", video=?"; $params[] = $video; }
+        if ($hasDeliveryCols) { $sql .= ", allow_self_pickup=?, allow_lalamove=?, allow_mail=?"; $params[] = $allow_self_pickup; $params[] = $allow_lalamove; $params[] = $allow_mail; }
         $params[] = $id;
         $sql .= " WHERE id=?";
         $pdo->prepare($sql)->execute($params);
     } else {
-        $pdo->prepare("INSERT INTO products (name, category_id, description, price, stock, is_active, image, video) VALUES (?,?,?,?,?,?,?,?)")
-            ->execute([$name, $category_id, $description, $price, $stock, $is_active, $image, $video]);
+        if ($hasDeliveryCols) {
+            $pdo->prepare("INSERT INTO products (name, category_id, description, price, stock, is_active, image, video, allow_self_pickup, allow_lalamove, allow_mail) VALUES (?,?,?,?,?,?,?,?,?,?,?)")
+                ->execute([$name, $category_id, $description, $price, $stock, $is_active, $image, $video, $allow_self_pickup, $allow_lalamove, $allow_mail]);
+        } else {
+            $pdo->prepare("INSERT INTO products (name, category_id, description, price, stock, is_active, image, video) VALUES (?,?,?,?,?,?,?,?)")
+                ->execute([$name, $category_id, $description, $price, $stock, $is_active, $image, $video]);
+        }
     }
     header('Location: products.php');
     exit;
@@ -87,6 +101,7 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
         <a href="products.php" class="active">商品管理</a>
         <a href="orders.php">订单管理</a>
         <a href="customers.php">客户管理</a>
+        <a href="delivery_settings.php">配送设置</a>
         <a href="change_password.php">修改密码</a>
         <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
         <a href="logout.php">退出登录</a>
@@ -139,6 +154,12 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
                     <?php if ($product && !empty($product['video'])): ?>
                         <p>当前：<a href="<?php echo BASE_PATH; ?>uploads/<?php echo htmlspecialchars($product['video']); ?>" target="_blank"><?php echo htmlspecialchars($product['video']); ?></a></p>
                     <?php endif; ?>
+                </div>
+                <div class="form-group">
+                    <label>配送方式（该商品支持的方式，勾选后前台结账可选）</label>
+                    <label style="display:block;"><input type="checkbox" name="allow_self_pickup" value="1" <?php echo (!isset($product['allow_self_pickup']) || $product['allow_self_pickup']) ? 'checked' : ''; ?>> 自取</label>
+                    <label style="display:block;"><input type="checkbox" name="allow_lalamove" value="1" <?php echo (!isset($product['allow_lalamove']) || $product['allow_lalamove']) ? 'checked' : ''; ?>> Lalamove</label>
+                    <label style="display:block;"><input type="checkbox" name="allow_mail" value="1" <?php echo (!isset($product['allow_mail']) || $product['allow_mail']) ? 'checked' : ''; ?>> 邮寄</label>
                 </div>
                 <div class="form-group">
                     <label><input type="checkbox" name="is_active" value="1" <?php echo (!$product || $product['is_active']) ? 'checked' : ''; ?>> 上架</label>
