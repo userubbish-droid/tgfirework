@@ -1,4 +1,3 @@
-/* 后台管理样式 */
 .admin-body {
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
     min-height: 100vh;
@@ -7,74 +6,37 @@
     justify-content: center;
     padding: 2rem;
 }
-
 .login-box {
     background: #fff;
     padding: 2.5rem;
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-    width: 100%;
     max-width: 380px;
-}
-
-.login-box h1 {
-    text-align: center;
-    margin-bottom: 0.3rem;
-    color: #1a1a2e;
-}
-
-.login-desc {
-    text-align: center;
-    color: #666;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
-}
-
-.btn-block {
     width: 100%;
-    padding: 0.75rem;
-    margin-top: 0.5rem;
 }
+.login-box h1 { text-align: center; margin-bottom: 0.3rem; color: #1a1a2e; }
+.login-desc { text-align: center; color: #666; margin-bottom: 1.5rem; font-size: 0.9rem; }
+.btn-block { width: 100%; padding: 0.75rem; margin-top: 0.5rem; }
+.login-footer { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; }
+.login-footer a { color: #c41e3a; text-decoration: none; }
 
-.login-footer {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-}
-
-.login-footer a {
-    color: #c41e3a;
-    text-decoration: none;
-}
-
-/* 后台布局 */
-.admin-layout {
-    display: flex;
-    min-height: 100vh;
-    background: #f0f2f5;
-}
-
+.admin-layout { display: flex; min-height: 100vh; background: #f0f2f5; }
 .admin-sidebar {
     width: 220px;
     background: #1a1a2e;
     color: #fff;
     padding: 1.5rem 0;
 }
-
 .admin-sidebar a {
     display: block;
     padding: 0.7rem 1.5rem;
     color: rgba(255,255,255,0.85);
     text-decoration: none;
-    transition: background 0.2s;
 }
-
-.admin-sidebar a:hover,
-.admin-sidebar a.active {
-    background: rgba(196, 30, 58, 0.3);
+.admin-sidebar a:hover, .admin-sidebar a.active {
+    background: rgba(196,30,58,0.3);
     color: #fff;
 }
-
 .admin-sidebar .brand {
     padding: 0 1.5rem 1rem;
     font-weight: bold;
@@ -82,13 +44,7 @@
     border-bottom: 1px solid rgba(255,255,255,0.1);
     margin-bottom: 0.5rem;
 }
-
-.admin-main {
-    flex: 1;
-    padding: 1.5rem 2rem;
-    overflow: auto;
-}
-
+.admin-main { flex: 1; padding: 1.5rem 2rem; overflow: auto; }
 .admin-header {
     display: flex;
     justify-content: space-between;
@@ -97,12 +53,7 @@
     padding-bottom: 1rem;
     border-bottom: 1px solid #e8e8e8;
 }
-
-.admin-header h2 {
-    color: #1a1a2e;
-    font-size: 1.4rem;
-}
-
+.admin-header h2 { color: #1a1a2e; font-size: 1.4rem; }
 .admin-card {
     background: #fff;
     border-radius: 8px;
@@ -110,86 +61,26 @@
     padding: 1.5rem;
     margin-bottom: 1.5rem;
 }
-
-.admin-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.admin-table th,
-.admin-table td {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-}
-
-.admin-table th {
-    background: #fafafa;
-    font-weight: 600;
-    color: #333;
-}
-
-.admin-table tr:hover td {
-    background: #f9f9f9;
-}
-
-.admin-badge {
-    display: inline-block;
-    padding: 0.2rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-}
-
+.admin-table { width: 100%; border-collapse: collapse; }
+.admin-table th, .admin-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #eee; }
+.admin-table th { background: #fafafa; font-weight: 600; }
+.admin-table tr:hover td { background: #f9f9f9; }
+.admin-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.85rem; }
 .admin-badge.pending { background: #fff3cd; color: #856404; }
 .admin-badge.paid { background: #cce5ff; color: #004085; }
 .admin-badge.shipped { background: #d4edda; color: #155724; }
 .admin-badge.completed { background: #d4edda; color: #155724; }
 .admin-badge.cancelled { background: #f8d7da; color: #721c24; }
-
-.admin-card select {
-    width: 100%;
-    padding: 0.6rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-}
-
-.admin-actions a,
-.admin-actions button {
-    margin-right: 0.5rem;
-    font-size: 0.9rem;
-}
-
-.btn-sm {
-    padding: 0.35rem 0.75rem;
-    font-size: 0.875rem;
-}
-
-.stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
+.admin-actions a, .admin-actions button { margin-right: 0.5rem; font-size: 0.9rem; }
+.btn-sm { padding: 0.35rem 0.75rem; font-size: 0.875rem; }
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
 .stat-card {
     background: linear-gradient(135deg, #c41e3a 0%, #9a1830 100%);
     color: #fff;
     padding: 1.25rem;
     border-radius: 8px;
 }
-
-.stat-card.gold {
-    background: linear-gradient(135deg, #d4af37 0%, #b8960c 100%);
-}
-
-.stat-card h3 {
-    font-size: 0.9rem;
-    opacity: 0.9;
-    margin-bottom: 0.3rem;
-}
-
-.stat-card .num {
-    font-size: 1.8rem;
-    font-weight: bold;
-}
+.stat-card.gold { background: linear-gradient(135deg, #d4af37 0%, #b8960c 100%); }
+.stat-card h3 { font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.3rem; }
+.stat-card .num { font-size: 1.8rem; font-weight: bold; }
+.admin-card select { width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }

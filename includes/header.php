@@ -9,7 +9,7 @@
 <body>
 <header class="site-header">
     <div class="container">
-        <a href="<?php echo SITE_URL; ?>/index.php" class="site-logo">🎆 烟花网购</a>
+        <a href="<?php echo SITE_URL; ?>/index.php" class="site-logo">烟花网购</a>
         <nav class="site-nav">
             <a href="<?php echo SITE_URL; ?>/index.php">首页</a>
             <a href="<?php echo SITE_URL; ?>/cart.php" class="cart-link" id="cartLink">购物车</a>

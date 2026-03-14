@@ -9,10 +9,7 @@ $id = (int)($_GET['id'] ?? 0);
 $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ?");
 $stmt->execute([$id]);
 $order = $stmt->fetch();
-if (!$order) {
-    header('Location: orders.php');
-    exit;
-}
+if (!$order) { header('Location: orders.php'); exit; }
 $items = $pdo->prepare("SELECT * FROM order_items WHERE order_id = ?");
 $items->execute([$id]);
 $items = $items->fetchAll();
@@ -30,7 +27,7 @@ $statusLabels = ['pending'=>'待付款','paid'=>'已付款','shipped'=>'已发�
 <body>
 <div class="admin-layout">
     <aside class="admin-sidebar">
-        <div class="brand">🎆 后台管理</div>
+        <div class="brand">后台管理</div>
         <a href="index.php">仪表盘</a>
         <a href="products.php">商品管理</a>
         <a href="orders.php" class="active">订单管理</a>
@@ -48,20 +45,13 @@ $statusLabels = ['pending'=>'待付款','paid'=>'已付款','shipped'=>'已发�
             <p><strong>收货人：</strong><?php echo htmlspecialchars($order['customer_name']); ?></p>
             <p><strong>电话：</strong><?php echo htmlspecialchars($order['customer_phone']); ?></p>
             <p><strong>地址：</strong><?php echo nl2br(htmlspecialchars($order['customer_address'])); ?></p>
-            <?php if ($order['remark']): ?>
-                <p><strong>备注：</strong><?php echo nl2br(htmlspecialchars($order['remark'])); ?></p>
-            <?php endif; ?>
+            <?php if ($order['remark']): ?><p><strong>备注：</strong><?php echo nl2br(htmlspecialchars($order['remark'])); ?></p><?php endif; ?>
         </div>
         <div class="admin-card">
             <h3>商品明细</h3>
             <table class="admin-table">
                 <thead>
-                    <tr>
-                        <th>商品名</th>
-                        <th>单价</th>
-                        <th>数量</th>
-                        <th>小计</th>
-                    </tr>
+                    <tr><th>商品名</th><th>单价</th><th>数量</th><th>小计</th></tr>
                 </thead>
                 <tbody>
                     <?php foreach ($items as $i): ?>

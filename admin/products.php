@@ -5,7 +5,6 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: login.php');
     exit;
 }
-
 $categories = $pdo->query("SELECT id, name FROM categories ORDER BY sort_order")->fetchAll();
 $action = $_GET['action'] ?? 'list';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
@@ -25,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
     $is_active = isset($_POST['is_active']) ? 1 : 0;
     $image = null;
     if (!empty($_FILES['image']['name'])) {
-        $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-        if (in_array(strtolower($ext), ['jpg','jpeg','png','gif','webp'])) {
+        $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+        if (in_array($ext, ['jpg','jpeg','png','gif','webp'])) {
             $uploadDir = __DIR__ . '/../uploads/';
             if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
             $filename = 'p_' . time() . '_' . uniqid() . '.' . $ext;
@@ -36,12 +35,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
         }
     }
     if ($action === 'edit' && $id) {
-        $sql = "UPDATE products SET name=?, category_id=?, description=?, price=?, stock=?, is_active=?";
         $params = [$name, $category_id, $description, $price, $stock, $is_active];
-        if ($image) {
-            $sql .= ", image=?";
-            $params[] = $image;
-        }
+        $sql = "UPDATE products SET name=?, category_id=?, description=?, price=?, stock=?, is_active=?";
+        if ($image) { $sql .= ", image=?"; $params[] = $image; }
         $params[] = $id;
         $sql .= " WHERE id=?";
         $pdo->prepare($sql)->execute($params);
@@ -58,10 +54,7 @@ if ($action === 'edit' && $id) {
     $stmt = $pdo->prepare("SELECT * FROM products WHERE id = ?");
     $stmt->execute([$id]);
     $product = $stmt->fetch();
-    if (!$product) {
-        header('Location: products.php');
-        exit;
-    }
+    if (!$product) { header('Location: products.php'); exit; }
 }
 
 $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC")->fetchAll();
@@ -78,7 +71,7 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
 <body>
 <div class="admin-layout">
     <aside class="admin-sidebar">
-        <div class="brand">🎆 后台管理</div>
+        <div class="brand">后台管理</div>
         <a href="index.php">仪表盘</a>
         <a href="products.php" class="active">商品管理</a>
         <a href="orders.php">订单管理</a>
@@ -90,7 +83,6 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
             <h2>商品管理</h2>
             <a href="?action=add" class="btn btn-primary btn-sm">添加商品</a>
         </div>
-
         <?php if ($action === 'add' || $action === 'edit'): ?>
         <div class="admin-card">
             <h3><?php echo $action === 'add' ? '添加商品' : '编辑商品'; ?></h3>
@@ -135,18 +127,11 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
             </form>
         </div>
         <?php endif; ?>
-
         <div class="admin-card">
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>名称</th>
-                        <th>分类</th>
-                        <th>价格</th>
-                        <th>库存</th>
-                        <th>状态</th>
-                        <th>操作</th>
+                        <th>ID</th><th>名称</th><th>分类</th><th>价格</th><th>库存</th><th>状态</th><th>操作</th>
                     </tr>
                 </thead>
                 <tbody>

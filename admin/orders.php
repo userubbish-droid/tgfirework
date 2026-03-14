@@ -5,7 +5,6 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: login.php');
     exit;
 }
-
 if (isset($_GET['update_status']) && isset($_GET['id'])) {
     $oid = (int)$_GET['id'];
     $status = $_GET['update_status'];
@@ -15,15 +14,8 @@ if (isset($_GET['update_status']) && isset($_GET['id'])) {
     header('Location: orders.php');
     exit;
 }
-
 $orders = $pdo->query("SELECT * FROM orders ORDER BY id DESC")->fetchAll();
-$statusLabels = [
-    'pending' => '待付款',
-    'paid' => '已付款',
-    'shipped' => '已发货',
-    'completed' => '已完成',
-    'cancelled' => '已取消',
-];
+$statusLabels = ['pending'=>'待付款','paid'=>'已付款','shipped'=>'已发货','completed'=>'已完成','cancelled'=>'已取消'];
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -37,7 +29,7 @@ $statusLabels = [
 <body>
 <div class="admin-layout">
     <aside class="admin-sidebar">
-        <div class="brand">🎆 后台管理</div>
+        <div class="brand">后台管理</div>
         <a href="index.php">仪表盘</a>
         <a href="products.php">商品管理</a>
         <a href="orders.php" class="active">订单管理</a>
@@ -52,13 +44,7 @@ $statusLabels = [
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>订单号</th>
-                        <th>客户</th>
-                        <th>电话</th>
-                        <th>金额</th>
-                        <th>状态</th>
-                        <th>下单时间</th>
-                        <th>操作</th>
+                        <th>订单号</th><th>客户</th><th>电话</th><th>金额</th><th>状态</th><th>下单时间</th><th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,9 +69,7 @@ $statusLabels = [
                     <?php endforeach; ?>
                 </tbody>
             </table>
-            <?php if (empty($orders)): ?>
-                <p style="padding:2rem; color:#888;">暂无订单</p>
-            <?php endif; ?>
+            <?php if (empty($orders)): ?><p style="padding:2rem; color:#888;">暂无订单</p><?php endif; ?>
         </div>
     </main>
 </div>

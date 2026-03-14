@@ -5,16 +5,11 @@ if (!isset($_SESSION['admin_id'])) {
     header('Location: login.php');
     exit;
 }
-
 $today = date('Y-m-d');
-$stmt = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = '$today'");
-$todayOrders = $stmt->fetchColumn();
-$stmt = $pdo->query("SELECT COALESCE(SUM(total_amount),0) FROM orders WHERE DATE(created_at) = '$today' AND status != 'cancelled'");
-$todaySales = $stmt->fetchColumn();
-$stmt = $pdo->query("SELECT COUNT(*) FROM products WHERE is_active = 1");
-$productCount = $stmt->fetchColumn();
-$stmt = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'");
-$pendingOrders = $stmt->fetchColumn();
+$todayOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) = '$today'")->fetchColumn();
+$todaySales = $pdo->query("SELECT COALESCE(SUM(total_amount),0) FROM orders WHERE DATE(created_at) = '$today' AND status != 'cancelled'")->fetchColumn();
+$productCount = $pdo->query("SELECT COUNT(*) FROM products WHERE is_active = 1")->fetchColumn();
+$pendingOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'")->fetchColumn();
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -28,7 +23,7 @@ $pendingOrders = $stmt->fetchColumn();
 <body>
 <div class="admin-layout">
     <aside class="admin-sidebar">
-        <div class="brand">🎆 后台管理</div>
+        <div class="brand">后台管理</div>
         <a href="index.php" class="active">仪表盘</a>
         <a href="products.php">商品管理</a>
         <a href="orders.php">订单管理</a>

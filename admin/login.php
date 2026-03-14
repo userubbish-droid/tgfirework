@@ -5,7 +5,6 @@ if (isset($_SESSION['admin_id'])) {
     header('Location: index.php');
     exit;
 }
-
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
@@ -37,11 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body class="admin-body">
 <div class="login-box">
-    <h1>🎆 后台管理</h1>
+    <h1>后台管理</h1>
     <p class="login-desc">烟花网购站 · 管理员登录</p>
-    <?php if ($error): ?>
-        <div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div>
-    <?php endif; ?>
+    <?php if ($error): ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
     <form method="post">
         <div class="form-group">
             <label>用户名</label>

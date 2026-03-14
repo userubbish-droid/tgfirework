@@ -12,13 +12,7 @@ require_once 'includes/header.php';
     <div id="cartTableWrap" style="display:none;">
         <table class="cart-table">
             <thead>
-                <tr>
-                    <th>商品</th>
-                    <th>单价</th>
-                    <th>数量</th>
-                    <th>小计</th>
-                    <th></th>
-                </tr>
+                <tr><th>商品</th><th>单价</th><th>数量</th><th>小计</th><th></th></tr>
             </thead>
             <tbody id="cartBody"></tbody>
         </table>
@@ -29,47 +23,36 @@ require_once 'includes/header.php';
         </p>
     </div>
 </main>
-
 <script>
 (function(){
-    var cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    var wrap = document.getElementById('cartTableWrap');
-    var empty = document.getElementById('cartContent');
-    var body = document.getElementById('cartBody');
-    var totalEl = document.getElementById('totalPrice');
-
-    if (cart.length === 0) {
-        wrap.style.display = 'none';
-        empty.style.display = 'block';
-        return;
-    }
-    empty.style.display = 'none';
-    wrap.style.display = 'block';
-
-    var total = 0;
-    cart.forEach(function(item, idx){
-        var subtotal = item.price * (item.quantity || 1);
-        total += subtotal;
-        var tr = document.createElement('tr');
-        tr.innerHTML = '<td>' + item.name + '</td><td>¥ ' + item.price.toFixed(2) + '</td>' +
-            '<td><input type="number" min="1" value="' + (item.quantity||1) + '" data-idx="' + idx + '" onchange="updateQty(this)"></td>' +
-            '<td>¥ ' + subtotal.toFixed(2) + '</td>' +
-            '<td><button onclick="removeItem(' + idx + ')">删除</button></td>';
+    var cart=JSON.parse(localStorage.getItem('cart')||'[]');
+    var wrap=document.getElementById('cartTableWrap');
+    var empty=document.getElementById('cartContent');
+    var body=document.getElementById('cartBody');
+    var totalEl=document.getElementById('totalPrice');
+    if(cart.length===0){ wrap.style.display='none'; empty.style.display='block'; return; }
+    empty.style.display='none'; wrap.style.display='block';
+    var total=0;
+    cart.forEach(function(item,idx){
+        var sub=item.price*(item.quantity||1);
+        total+=sub;
+        var tr=document.createElement('tr');
+        tr.innerHTML='<td>'+item.name+'</td><td>¥ '+item.price.toFixed(2)+'</td><td><input type="number" min="1" value="'+(item.quantity||1)+'" data-idx="'+idx+'" onchange="updateQty(this)"></td><td>¥ '+sub.toFixed(2)+'</td><td><button onclick="removeItem('+idx+')">删除</button></td>';
         body.appendChild(tr);
     });
-    totalEl.textContent = '¥ ' + total.toFixed(2);
+    totalEl.textContent='¥ '+total.toFixed(2);
 })();
 function updateQty(input){
-    var idx = parseInt(input.dataset.idx);
-    var cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    cart[idx].quantity = Math.max(1, parseInt(input.value) || 1);
-    localStorage.setItem('cart', JSON.stringify(cart));
+    var idx=parseInt(input.dataset.idx);
+    var cart=JSON.parse(localStorage.getItem('cart')||'[]');
+    cart[idx].quantity=Math.max(1,parseInt(input.value)||1);
+    localStorage.setItem('cart',JSON.stringify(cart));
     location.reload();
 }
 function removeItem(idx){
-    var cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    cart.splice(idx, 1);
-    localStorage.setItem('cart', JSON.stringify(cart));
+    var cart=JSON.parse(localStorage.getItem('cart')||'[]');
+    cart.splice(idx,1);
+    localStorage.setItem('cart',JSON.stringify(cart));
     location.reload();
 }
 </script>
