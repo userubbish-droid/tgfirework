@@ -9,11 +9,13 @@ if (!isset($_SESSION['admin_id'])) {
 $hasRole = false;
 $hasAgentStatus = false;
 $hasStatus = false;
+$hasDefaultRebate = false;
 try {
     $cols = $pdo->query("SHOW COLUMNS FROM customers")->fetchAll(PDO::FETCH_COLUMN);
     $hasRole = in_array('role', $cols);
     $hasAgentStatus = in_array('agent_status', $cols);
     $hasStatus = in_array('status', $cols);
+    $hasDefaultRebate = in_array('default_rebate', $cols);
 } catch (Exception $e) {}
 
 if (isset($_GET['approve']) && isset($_GET['id'])) {
@@ -36,6 +38,15 @@ if (isset($_GET['set_role']) && isset($_GET['id'])) {
     header('Location: customers.php');
     exit;
 }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['set_default_rebate']) && $hasDefaultRebate) {
+    $cid = (int)($_POST['customer_id'] ?? 0);
+    $val = isset($_POST['default_rebate']) && $_POST['default_rebate'] !== '' ? max(0, (float)$_POST['default_rebate']) : null;
+    if ($cid) {
+        $pdo->prepare("UPDATE customers SET default_rebate = ? WHERE id = ?")->execute([$val, $cid]);
+    }
+    header('Location: customers.php' . ($filter ? '?filter=' . urlencode($filter) : ''));
+    exit;
+}
 
 $filter = isset($_GET['filter']) ? $_GET['filter'] : '';
 $sql = "SELECT id, email, name, phone, created_at";
@@ -49,6 +60,7 @@ if ($hasRole && $filter === 'customer') {
     if ($hasRole) $sql .= ", role";
     if ($hasAgentStatus) $sql .= ", agent_status";
     if ($hasStatus) $sql .= ", status";
+    if ($hasDefaultRebate) $sql .= ", default_rebate";
     $sql .= " FROM customers WHERE role = 'customer' ORDER BY created_at DESC";
 }
 if ($hasRole && $filter === 'agent') {
@@ -56,11 +68,13 @@ if ($hasRole && $filter === 'agent') {
     if ($hasRole) $sql .= ", role";
     if ($hasAgentStatus) $sql .= ", agent_status";
     if ($hasStatus) $sql .= ", status";
+    if ($hasDefaultRebate) $sql .= ", default_rebate";
     $sql .= " FROM customers WHERE role = 'agent' ORDER BY created_at DESC";
 }
 if ($hasRole && $hasAgentStatus && $filter === 'agent_pending') {
     $sql = "SELECT id, email, name, phone, created_at, role, agent_status";
     if ($hasStatus) $sql .= ", status";
+    if ($hasDefaultRebate) $sql .= ", default_rebate";
     $sql .= " FROM customers WHERE role = 'agent' AND agent_status = 'pending' ORDER BY created_at DESC";
 }
 $customers = $pdo->query($sql)->fetchAll();
@@ -91,6 +105,7 @@ if ($hasAgentStatus) {
         <a href="products.php">商品管理</a>
         <a href="orders.php">订单管理</a>
         <a href="customers.php" class="active">客户管理</a>
+        <a href="agent_rebate.php">Agent 回扣</a>
         <a href="delivery_settings.php">配送设置</a>
         <a href="change_password.php">修改密码</a>
         <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
@@ -125,6 +140,7 @@ if ($hasAgentStatus) {
                         <th>邮箱</th>
                         <?php if ($hasRole): ?><th>身份</th><?php endif; ?>
                         <?php if ($hasAgentStatus): ?><th>批发状态</th><?php endif; ?>
+                        <?php if ($hasDefaultRebate): ?><th>默认回扣（元）</th><?php endif; ?>
                         <?php if ($hasStatus && !$hasRole): ?><th>状态</th><?php endif; ?>
                         <th>注册时间</th>
                         <th>操作</th>
@@ -154,6 +170,18 @@ if ($hasAgentStatus) {
                             <?php else: ?>
                                 —
                             <?php endif; ?>
+                        </td>
+                        <?php endif; ?>
+                        <?php if ($hasDefaultRebate): ?>
+                        <td>
+                            <?php if (($c['role'] ?? '') === 'agent'): ?>
+                                <form method="post" style="display:inline-flex;align-items:center;gap:0.25rem;">
+                                    <input type="hidden" name="set_default_rebate" value="1">
+                                    <input type="hidden" name="customer_id" value="<?php echo $c['id']; ?>">
+                                    <input type="number" name="default_rebate" step="0.01" min="0" value="<?php echo isset($c['default_rebate']) && $c['default_rebate'] !== null && $c['default_rebate'] !== '' ? $c['default_rebate'] : ''; ?>" placeholder="全部商品" style="width:70px;">
+                                    <button type="submit" class="btn btn-sm">保存</button>
+                                </form>
+                            <?php else: ?>—<?php endif; ?>
                         </td>
                         <?php endif; ?>
                         <?php if ($hasStatus && !$hasRole): ?>

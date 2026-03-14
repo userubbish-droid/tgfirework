@@ -33,6 +33,7 @@ $deliveryLabels = ['self_pickup'=>'自取','lalamove'=>'Lalamove','mail'=>'邮�
         <a href="products.php">商品管理</a>
         <a href="orders.php" class="active">订单管理</a>
         <a href="customers.php">客户管理</a>
+        <a href="agent_rebate.php">Agent 回扣</a>
         <a href="delivery_settings.php">配送设置</a>
         <a href="change_password.php">修改密码</a>
         <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>

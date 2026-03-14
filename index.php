@@ -51,7 +51,14 @@ require_once 'includes/header.php';
         <?php else: ?>
             <?php foreach ($products as $p):
                 $isAgent = isset($_SESSION['customer_role']) && $_SESSION['customer_role'] === 'agent';
-                $rebate = isset($p['agent_rebate']) && $p['agent_rebate'] !== null && $p['agent_rebate'] !== '' ? (float)$p['agent_rebate'] : 0;
+                $rebate = 0;
+                if ($isAgent) {
+                    if (isset($p['agent_rebate']) && $p['agent_rebate'] !== null && $p['agent_rebate'] !== '') {
+                        $rebate = (float)$p['agent_rebate'];
+                    } elseif (isset($_SESSION['agent_default_rebate']) && $_SESSION['agent_default_rebate'] !== null) {
+                        $rebate = (float)$_SESSION['agent_default_rebate'];
+                    }
+                }
                 $priceDisplay = $isAgent && $rebate > 0 ? max(0, (float)$p['price'] - $rebate) : (float)$p['price'];
             ?>
                 <div class="product-card">

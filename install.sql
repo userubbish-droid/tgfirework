@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS customers (
     role ENUM('customer','agent') NOT NULL DEFAULT 'customer' COMMENT 'customer=普通客户 agent=批发',
     status ENUM('pending','approved') NOT NULL DEFAULT 'approved' COMMENT '账号是否可登录',
     agent_status ENUM('pending','approved') DEFAULT NULL COMMENT '仅agent: 申请待审核/已通过',
+    default_rebate DECIMAL(10,2) DEFAULT NULL COMMENT 'Agent 默认回扣（元），全部商品适用；商品若设特别回扣则优先用特别回扣',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

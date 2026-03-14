@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!$phone || !$password) {
         $error = '请填写手机号和密码';
     } else {
-        $stmt = $pdo->prepare("SELECT id, phone, password, name, role, status FROM customers WHERE phone = ?");
+        $stmt = $pdo->prepare("SELECT * FROM customers WHERE phone = ?");
         $stmt->execute([$phone]);
         $user = $stmt->fetch();
         if (!$user || !password_verify($password, $user['password'])) {
@@ -31,6 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['customer_phone'] = $user['phone'];
             $_SESSION['customer_name'] = $user['name'];
             $_SESSION['customer_role'] = $user['role'] ?? 'customer';
+            if (($_SESSION['customer_role'] ?? '') === 'agent' && isset($user['default_rebate']) && $user['default_rebate'] !== null && $user['default_rebate'] !== '') {
+                $_SESSION['agent_default_rebate'] = (float)$user['default_rebate'];
+            } else {
+                $_SESSION['agent_default_rebate'] = null;
+            }
             $to = isset($_GET['from']) ? $_GET['from'] : 'index';
             if ($to === 'checkout') {
                 header('Location: ' . BASE_PATH . 'checkout.php');

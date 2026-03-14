@@ -28,8 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
     $sell_type = in_array($_POST['sell_type'] ?? '', ['piece','box','both']) ? $_POST['sell_type'] : 'piece';
     $box_pieces = ($sell_type === 'box' || $sell_type === 'both') && isset($_POST['box_pieces']) ? max(1, (int)$_POST['box_pieces']) : null;
     $price_box = ($sell_type === 'box' || $sell_type === 'both') && isset($_POST['price_box']) ? (float)$_POST['price_box'] : null;
-    $agent_rebate = isset($_POST['agent_rebate']) && $_POST['agent_rebate'] !== '' ? max(0, (float)$_POST['agent_rebate']) : null;
-    $agent_rebate_box = isset($_POST['agent_rebate_box']) && $_POST['agent_rebate_box'] !== '' ? max(0, (float)$_POST['agent_rebate_box']) : null;
     $image = null;
     $video = null;
     $uploadDir = __DIR__ . '/../uploads/';
@@ -54,12 +52,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
     }
     $hasDeliveryCols = false;
     $hasBoxCols = false;
-    $hasRebateCols = false;
     try {
         $cols = $pdo->query("SHOW COLUMNS FROM products")->fetchAll(PDO::FETCH_COLUMN);
         $hasDeliveryCols = in_array('allow_self_pickup', $cols);
         $hasBoxCols = in_array('sell_type', $cols);
-        $hasRebateCols = in_array('agent_rebate', $cols);
     } catch (Exception $e) {}
     if ($action === 'edit' && $id) {
         $params = [$name, $category_id, $description, $price, $stock, $is_active];
@@ -68,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
         if ($video) { $sql .= ", video=?"; $params[] = $video; }
         if ($hasDeliveryCols) { $sql .= ", allow_self_pickup=?, allow_lalamove=?, allow_mail=?"; $params[] = $allow_self_pickup; $params[] = $allow_lalamove; $params[] = $allow_mail; }
         if ($hasBoxCols) { $sql .= ", sell_type=?, box_pieces=?, price_box=?"; $params[] = $sell_type; $params[] = $box_pieces; $params[] = $price_box; }
-        if ($hasRebateCols) { $sql .= ", agent_rebate=?, agent_rebate_box=?"; $params[] = $agent_rebate; $params[] = $agent_rebate_box; }
         $params[] = $id;
         $sql .= " WHERE id=?";
         $pdo->prepare($sql)->execute($params);
@@ -78,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === '
         $vals = [$name, $category_id, $description, $price, $stock, $is_active, $image, $video];
         if ($hasDeliveryCols) { $fields .= ", allow_self_pickup, allow_lalamove, allow_mail"; $placeholders .= ",?,?,?"; $vals[] = $allow_self_pickup; $vals[] = $allow_lalamove; $vals[] = $allow_mail; }
         if ($hasBoxCols) { $fields .= ", sell_type, box_pieces, price_box"; $placeholders .= ",?,?,?"; $vals[] = $sell_type; $vals[] = $box_pieces; $vals[] = $price_box; }
-        if ($hasRebateCols) { $fields .= ", agent_rebate, agent_rebate_box"; $placeholders .= ",?,?"; $vals[] = $agent_rebate; $vals[] = $agent_rebate_box; }
         $pdo->prepare("INSERT INTO products ($fields) VALUES ($placeholders)")->execute($vals);
     }
     header('Location: products.php');
@@ -92,10 +86,6 @@ if ($action === 'edit' && $id) {
     $product = $stmt->fetch();
     if (!$product) { header('Location: products.php'); exit; }
 }
-if (($action === 'add' || $action === 'edit') && !isset($hasRebateCols)) {
-    try { $cols = $pdo->query("SHOW COLUMNS FROM products")->fetchAll(PDO::FETCH_COLUMN); $hasRebateCols = in_array('agent_rebate', $cols); } catch (Exception $e) { $hasRebateCols = false; }
-}
-
 $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id ORDER BY p.id DESC")->fetchAll();
 ?>
 <!DOCTYPE html>
@@ -115,6 +105,7 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
         <a href="products.php" class="active">商品管理</a>
         <a href="orders.php">订单管理</a>
         <a href="customers.php">客户管理</a>
+        <a href="agent_rebate.php">Agent 回扣</a>
         <a href="delivery_settings.php">配送设置</a>
         <a href="change_password.php">修改密码</a>
         <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
@@ -194,22 +185,6 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
                 <div class="form-group">
                     <label><input type="checkbox" name="is_active" value="1" <?php echo (!$product || $product['is_active']) ? 'checked' : ''; ?>> 上架</label>
                 </div>
-                <?php if (!empty($hasRebateCols)): ?>
-                <div class="form-group agent-rebate-wrap">
-                    <button type="button" class="btn btn-sm" id="toggleAgentRebate" style="background:#f0f0f0;">▼ Agent 回扣（可选，点击展开）</button>
-                    <div id="agentRebateFields" style="display:none; margin-top:0.5rem; padding:0.75rem; background:#f9f9f9; border-radius:6px;">
-                        <p style="margin-bottom:0.5rem; color:#666; font-size:0.9em;">仅 Agent 看到折后价，普通客户仍见前台价。不填则按原价。</p>
-                        <div class="form-group" style="margin-bottom:0.5rem;">
-                            <label>件价回扣（元）</label>
-                            <input type="number" name="agent_rebate" step="0.01" min="0" value="<?php echo ($product && isset($product['agent_rebate']) && $product['agent_rebate'] !== null && $product['agent_rebate'] !== '') ? $product['agent_rebate'] : ''; ?>" placeholder="例 220 → Agent 见 原价-220" style="width:100%; max-width:200px;">
-                        </div>
-                        <div class="form-group">
-                            <label>箱价回扣（元，有按箱时用）</label>
-                            <input type="number" name="agent_rebate_box" step="0.01" min="0" value="<?php echo ($product && isset($product['agent_rebate_box']) && $product['agent_rebate_box'] !== null && $product['agent_rebate_box'] !== '') ? $product['agent_rebate_box'] : ''; ?>" placeholder="按箱时的回扣，不填则箱价不变" style="width:100%; max-width:200px;">
-                        </div>
-                    </div>
-                </div>
-                <?php endif; ?>
                 <button type="submit" class="btn btn-primary">保存</button>
                 <a href="products.php" class="btn" style="margin-left:0.5rem;">取消</a>
             </form>
@@ -219,11 +194,6 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
                 var boxFields = document.querySelectorAll('.box-fields');
                 function toggle(){ var v = sel ? sel.value : 'piece'; boxFields.forEach(function(el){ el.style.display = (v === 'box' || v === 'both') ? '' : 'none'; }); }
                 if(sel){ sel.addEventListener('change', toggle); toggle(); }
-                var rebateBtn = document.getElementById('toggleAgentRebate');
-                var rebateFields = document.getElementById('agentRebateFields');
-                if(rebateBtn && rebateFields){
-                    rebateBtn.onclick = function(){ var on = rebateFields.style.display !== 'none'; rebateFields.style.display = on ? 'none' : 'block'; rebateBtn.textContent = on ? '▼ Agent 回扣（可选，点击展开）' : '▲ Agent 回扣（点击收起）'; };
-                }
             })();
             </script>
         </div>
