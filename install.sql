@@ -8,13 +8,13 @@ CREATE TABLE IF NOT EXISTS admins (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 客户：普通客户=注册即可购物；Agent(批发)=需申请或由管理员提升，可单独审核
+-- 客户：登录使用手机号；普通客户=注册即可购物；Agent(批发)=需申请或由管理员提升
 CREATE TABLE IF NOT EXISTS customers (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(100) NOT NULL UNIQUE,
+    phone VARCHAR(20) NOT NULL UNIQUE COMMENT '登录账号',
+    email VARCHAR(100) DEFAULT NULL,
     password VARCHAR(255) NOT NULL,
     name VARCHAR(50) NOT NULL,
-    phone VARCHAR(20) NOT NULL DEFAULT '',
     address TEXT,
     role ENUM('customer','agent') NOT NULL DEFAULT 'customer' COMMENT 'customer=普通客户 agent=批发',
     status ENUM('pending','approved') NOT NULL DEFAULT 'approved' COMMENT '账号是否可登录',

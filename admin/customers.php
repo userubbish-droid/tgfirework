@@ -118,9 +118,9 @@ if ($hasAgentStatus) {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>邮箱</th>
+                        <th>手机号</th>
                         <th>姓名</th>
-                        <th>手机</th>
+                        <th>邮箱</th>
                         <?php if ($hasRole): ?><th>身份</th><?php endif; ?>
                         <?php if ($hasAgentStatus): ?><th>批发状态</th><?php endif; ?>
                         <?php if ($hasStatus && !$hasRole): ?><th>状态</th><?php endif; ?>
@@ -132,9 +132,9 @@ if ($hasAgentStatus) {
                     <?php foreach ($customers as $c): ?>
                     <tr>
                         <td><?php echo $c['id']; ?></td>
-                        <td><?php echo htmlspecialchars($c['email']); ?></td>
-                        <td><?php echo htmlspecialchars($c['name']); ?></td>
                         <td><?php echo htmlspecialchars($c['phone'] ?? ''); ?></td>
+                        <td><?php echo htmlspecialchars($c['name']); ?></td>
+                        <td><?php echo htmlspecialchars($c['email'] ?? ''); ?></td>
                         <?php if ($hasRole): ?>
                         <td>
                             <?php echo ($c['role'] ?? 'customer') === 'agent' ? 'Agent(批发)' : '普通客户'; ?>

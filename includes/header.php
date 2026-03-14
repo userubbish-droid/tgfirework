@@ -20,7 +20,7 @@
                 <?php elseif (($_SESSION['customer_role'] ?? '') === 'agent'): ?>
                     <span style="color:#d4af37;">批发客户</span>
                 <?php endif; ?>
-                <span style="color:rgba(255,255,255,0.9);"><?php echo htmlspecialchars($_SESSION['customer_name'] ?? $_SESSION['customer_email']); ?></span>
+                <span style="color:rgba(255,255,255,0.9);"><?php echo htmlspecialchars($_SESSION['customer_name'] ?? $_SESSION['customer_phone'] ?? ''); ?></span>
                 <a href="<?php echo BASE_PATH; ?>logout.php">退出</a>
             <?php else: ?>
                 <a href="<?php echo BASE_PATH; ?>login.php">登录</a>
