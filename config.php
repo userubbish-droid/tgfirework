@@ -7,7 +7,7 @@ $dbConfig = [
     'host'     => 'localhost',
     'dbname'   => 'u870568714_tgfirework',
     'user'     => 'u870568714_tgfirework',
-    'password' => 'Tgfirework@996',  // 线上必填：在 config.local.php 里写 password
+    'password' => '',  // 线上必填：在 config.local.php 里写 password
     'charset'  => 'utf8mb4',
 ];
 
