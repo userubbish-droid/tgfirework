@@ -11,7 +11,7 @@ $stmt = $pdo->prepare("SELECT * FROM orders WHERE id = ? AND customer_id = ?");
 $stmt->execute([$id, $_SESSION['customer_id']]);
 $order = $stmt->fetch();
 if (!$order) {
-    header('Location: my_orders.php');
+    header('Location: ' . BASE_PATH . 'my_orders.php');
     exit;
 }
 

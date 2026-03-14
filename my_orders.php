@@ -6,10 +6,17 @@ if (!isset($_SESSION['customer_id'])) {
     exit;
 }
 
-$stmt = $pdo->prepare("SELECT id, order_no, total_amount, status, created_at FROM orders WHERE customer_id = ? ORDER BY id DESC");
-$stmt->execute([$_SESSION['customer_id']]);
-$orders = $stmt->fetchAll();
+$orders = [];
+$dbError = '';
 $statusText = ['pending' => '待付款', 'paid' => '已付款', 'shipped' => '已发货', 'completed' => '已完成', 'cancelled' => '已取消'];
+try {
+    $stmt = $pdo->prepare("SELECT id, order_no, total_amount, status, created_at FROM orders WHERE customer_id = ? ORDER BY id DESC");
+    $stmt->execute([$_SESSION['customer_id']]);
+    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $orders = [];
+    $dbError = $e->getMessage();
+}
 
 $pageTitle = '我的订单 - 烟花网购';
 require_once 'includes/header.php';
@@ -17,7 +24,9 @@ require_once 'includes/header.php';
 
 <main>
     <h2>我的订单</h2>
-    <?php if (empty($orders)): ?>
+    <?php if (!empty($dbError)): ?>
+        <p class="alert alert-error">无法加载订单列表，请稍后再试。</p>
+    <?php elseif (empty($orders)): ?>
         <p class="cart-empty">暂无订单，<a href="<?php echo BASE_PATH; ?>index.php">去选购</a></p>
     <?php else: ?>
         <table class="cart-table">
@@ -37,7 +46,7 @@ require_once 'includes/header.php';
                     <td>¥ <?php echo number_format($o['total_amount'], 2); ?></td>
                     <td><?php echo $statusText[$o['status']] ?? $o['status']; ?></td>
                     <td><?php echo $o['created_at']; ?></td>
-                    <td><a href="<?php echo BASE_PATH; ?>order_detail.php?id=<?php echo $o['id']; ?>">查看详情</a></td>
+                    <td><a href="<?php echo BASE_PATH; ?>order_detail.php?id=<?php echo (int)($o['id'] ?? 0); ?>">查看详情</a></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

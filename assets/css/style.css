@@ -213,33 +213,41 @@ main {
 .btn-primary { background: linear-gradient(180deg, #c41e3a 0%, #8b0000 100%); color: #fff; }
 .btn-primary:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); }
 
-/* 配送方式：与 Today/Yesterday 按钮一致 - btn-preset 风格 */
+/* 配送方式：与首页分类按钮同款 - 白底灰边 / 选中红底白字 */
 .delivery-method-wrap .form-label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
 .delivery-options-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0;
+    gap: 0.5rem;
+    position: relative;
 }
 .delivery-option-btn {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 8px 16px;
-    margin: 0 0 0 4px;
-    font-size: 13px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
     font-weight: 500;
-    color: #fff !important;
-    background: #8bc34a !important;
+    color: #333;
+    background: #fff;
+    border: 1px solid #ddd;
     border-radius: 6px;
     cursor: pointer;
-    border: none;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
-/* 单选完全隐藏，不占位、不显示，只保留一排按钮 */
+.delivery-option-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+/* 选中态：红底白字，与分类选中一致 */
+.delivery-option-btn.delivery-selected {
+    background: linear-gradient(180deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff !important;
+    border-color: var(--primary);
+}
+/* 单选完全隐藏 */
 .delivery-radio-hidden {
     position: absolute;
     left: -9999px;
@@ -248,18 +256,6 @@ main {
     overflow: hidden;
     clip: rect(0,0,0,0);
     clip-path: inset(50%);
-}
-.delivery-options-row { position: relative; }
-.delivery-options-row .delivery-option-btn:first-of-type { margin-left: 0; }
-.delivery-option-btn:hover {
-    background: #9ccc65 !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-}
-/* 选中态：浅蓝底 + 深色字 */
-.delivery-option-btn.delivery-selected {
-    background: #90caf9 !important;
-    color: #0d47a1 !important;
-    box-shadow: 0 0 0 1px rgba(13,71,161,0.25), 0 1px 2px rgba(0,0,0,0.08);
 }
 .delivery-option { display: inline-block; margin-right: 1rem; margin-bottom: 0.3rem; font-weight: 500; }
 .delivery-option input { margin-right: 0.35rem; }
