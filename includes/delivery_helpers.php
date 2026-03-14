@@ -4,22 +4,27 @@
  */
 
 function getDeliverySettings(PDO $pdo) {
-    $stmt = $pdo->query("SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'delivery_%'");
-    $rows = $stmt ? $stmt->fetchAll(PDO::FETCH_KEY_PAIR) : [];
+    try {
+        $stmt = $pdo->query("SELECT setting_key, setting_value FROM settings WHERE setting_key LIKE 'delivery_%'");
+        $rows = $stmt ? $stmt->fetchAll(PDO::FETCH_KEY_PAIR) : [];
+    } catch (Exception $e) {
+        $rows = [];
+    }
     $get = function($key) use ($rows) { return $rows[$key] ?? ''; };
+    $defaultOn = empty($rows);
     return [
         'self_pickup' => [
-            'enabled' => (int)$get('delivery_self_pickup_enabled') === 1,
+            'enabled' => $defaultOn || (int)$get('delivery_self_pickup_enabled') === 1,
             'date_from' => $get('delivery_self_pickup_date_from'),
             'date_to' => $get('delivery_self_pickup_date_to'),
         ],
         'lalamove' => [
-            'enabled' => (int)$get('delivery_lalamove_enabled') === 1,
+            'enabled' => $defaultOn || (int)$get('delivery_lalamove_enabled') === 1,
             'date_from' => $get('delivery_lalamove_date_from'),
             'date_to' => $get('delivery_lalamove_date_to'),
         ],
         'mail' => [
-            'enabled' => (int)$get('delivery_mail_enabled') === 1,
+            'enabled' => $defaultOn || (int)$get('delivery_mail_enabled') === 1,
             'date_from' => $get('delivery_mail_date_from'),
             'date_to' => $get('delivery_mail_date_to'),
         ],
@@ -40,7 +45,6 @@ function getAllowedDeliveryTypes(PDO $pdo, array $productIds) {
     $settings = getDeliverySettings($pdo);
     $today = date('Y-m-d');
     $placeholders = implode(',', array_fill(0, count($productIds), '?'));
-    $cols = ['allow_self_pickup', 'allow_lalamove', 'allow_mail'];
     try {
         $stmt = $pdo->prepare("SELECT MIN(COALESCE(allow_self_pickup,1)) AS s, MIN(COALESCE(allow_lalamove,1)) AS l, MIN(COALESCE(allow_mail,1)) AS m FROM products WHERE id IN ($placeholders)");
         $stmt->execute($productIds);

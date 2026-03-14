@@ -16,6 +16,7 @@ if (isset($_GET['update_status']) && isset($_GET['id'])) {
 }
 $orders = $pdo->query("SELECT * FROM orders ORDER BY id DESC")->fetchAll();
 $statusLabels = ['pending'=>'待付款','paid'=>'已付款','shipped'=>'已发货','completed'=>'已完成','cancelled'=>'已取消'];
+$deliveryLabels = ['self_pickup'=>'自取','lalamove'=>'Lalamove','mail'=>'邮寄'];
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -47,7 +48,7 @@ $statusLabels = ['pending'=>'待付款','paid'=>'已付款','shipped'=>'已发�
             <table class="admin-table">
                 <thead>
                     <tr>
-                        <th>订单号</th><th>客户</th><th>电话</th><th>金额</th><th>状态</th><th>下单时间</th><th>操作</th>
+                        <th>订单号</th><th>客户</th><th>电话</th><th>配送</th><th>金额</th><th>状态</th><th>下单时间</th><th>操作</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -56,6 +57,7 @@ $statusLabels = ['pending'=>'待付款','paid'=>'已付款','shipped'=>'已发�
                         <td><?php echo htmlspecialchars($o['order_no']); ?></td>
                         <td><?php echo htmlspecialchars($o['customer_name']); ?></td>
                         <td><?php echo htmlspecialchars($o['customer_phone']); ?></td>
+                        <td><?php echo isset($o['delivery_type']) && $o['delivery_type'] ? ($deliveryLabels[$o['delivery_type']] ?? $o['delivery_type']) : '—'; ?></td>
                         <td>¥ <?php echo number_format($o['total_amount'], 2); ?></td>
                         <td><span class="admin-badge <?php echo $o['status']; ?>"><?php echo $statusLabels[$o['status']] ?? $o['status']; ?></span></td>
                         <td><?php echo $o['created_at']; ?></td>

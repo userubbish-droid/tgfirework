@@ -34,8 +34,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $addressVal = $deliveryType === 'self_pickup' ? ($address !== '' ? $address : '自取') : $address;
         $pdo->beginTransaction();
         try {
-            $stmt = $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, delivery_type, total_amount, remark) VALUES (?,?,?,?,?,?,?,?)");
-            $stmt->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $addressVal, $deliveryType ?: null, $total, $remark]);
+            $hasDeliveryCol = false;
+            try {
+                $cols = $pdo->query("SHOW COLUMNS FROM orders")->fetchAll(PDO::FETCH_COLUMN);
+                $hasDeliveryCol = in_array('delivery_type', $cols);
+            } catch (Exception $e) {}
+            if ($hasDeliveryCol) {
+                $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, delivery_type, total_amount, remark) VALUES (?,?,?,?,?,?,?,?)")
+                    ->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $addressVal, $deliveryType ?: null, $total, $remark]);
+            } else {
+                $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, total_amount, remark) VALUES (?,?,?,?,?,?,?)")
+                    ->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $addressVal, $total, $remark]);
+            }
             $orderId = $pdo->lastInsertId();
             $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) VALUES (?,?,?,?,?,?)");
             foreach ($cart as $item) {
@@ -66,8 +76,14 @@ if (!empty($_SESSION['customer_id'])) {
 ?>
 <main>
     <h2>确认订单</h2>
-    <form method="post" action="">
+    <form method="post" action="" id="checkoutForm">
         <input type="hidden" name="cart_json" id="cartJson" value="">
+        <div class="form-group">
+            <label>配送方式 *</label>
+            <label class="delivery-option"><input type="radio" name="delivery_type" value="self_pickup" required> 自取</label>
+            <label class="delivery-option"><input type="radio" name="delivery_type" value="lalamove"> Lalamove</label>
+            <label class="delivery-option"><input type="radio" name="delivery_type" value="mail"> 邮寄</label>
+        </div>
         <div class="form-group">
             <label>收货人 *</label>
             <input type="text" name="customer_name" required placeholder="姓名" value="<?php echo htmlspecialchars($cust['name'] ?? ''); ?>">
@@ -77,8 +93,8 @@ if (!empty($_SESSION['customer_id'])) {
             <input type="text" name="customer_phone" required placeholder="手机号" value="<?php echo htmlspecialchars($cust['phone'] ?? ''); ?>">
         </div>
         <div class="form-group">
-            <label>收货地址 *</label>
-            <textarea name="customer_address" required placeholder="详细地址"><?php echo htmlspecialchars($cust['address'] ?? ''); ?></textarea>
+            <label>收货地址 <span id="addrLabel">（自取可不填）</span></label>
+            <textarea name="customer_address" placeholder="详细地址；自取可填自取点或留空"><?php echo htmlspecialchars($cust['address'] ?? ''); ?></textarea>
         </div>
         <div class="form-group">
             <label>备注</label>

@@ -99,7 +99,7 @@ INSERT INTO settings (setting_key, setting_value) VALUES
 ('delivery_lalamove_date_to', ''),
 ('delivery_mail_date_from', ''),
 ('delivery_mail_date_to', '')
-ON DUPLICATE KEY UPDATE setting_key=setting_key;
+ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value);
 
 INSERT INTO categories (name, sort_order) VALUES
 ('礼花弹', 1),
