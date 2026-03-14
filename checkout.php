@@ -81,11 +81,13 @@ if (!empty($_SESSION['customer_id'])) {
         <div class="form-group delivery-method-wrap">
             <label class="form-label">配送方式 *</label>
             <div class="delivery-options-row" role="group" aria-label="配送方式">
-                <input type="radio" name="delivery_type" id="delivery_self_pickup" value="self_pickup" required class="delivery-radio">
+                <div class="delivery-radio-hidden" aria-hidden="true">
+                    <input type="radio" name="delivery_type" id="delivery_self_pickup" value="self_pickup" required tabindex="-1">
+                    <input type="radio" name="delivery_type" id="delivery_lalamove" value="lalamove" tabindex="-1">
+                    <input type="radio" name="delivery_type" id="delivery_mail" value="mail" tabindex="-1">
+                </div>
                 <button type="button" class="delivery-option-btn" data-delivery="self_pickup" aria-pressed="false">自取</button>
-                <input type="radio" name="delivery_type" id="delivery_lalamove" value="lalamove" class="delivery-radio">
                 <button type="button" class="delivery-option-btn" data-delivery="lalamove" aria-pressed="false">Lalamove</button>
-                <input type="radio" name="delivery_type" id="delivery_mail" value="mail" class="delivery-radio">
                 <button type="button" class="delivery-option-btn" data-delivery="mail" aria-pressed="false">邮寄</button>
             </div>
         </div>
@@ -118,7 +120,7 @@ if (!empty($_SESSION['customer_id'])) {
 (function(){
     var row = document.querySelector('.delivery-options-row');
     if(!row) return;
-    var radios = row.querySelectorAll('.delivery-radio');
+    var radios = row.querySelectorAll('input[name="delivery_type"]');
     var btns = row.querySelectorAll('.delivery-option-btn');
     function syncFromRadio(){
         var checked = row.querySelector('input[name="delivery_type"]:checked');

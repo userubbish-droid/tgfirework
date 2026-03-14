@@ -236,7 +236,17 @@ main {
     box-shadow: 0 1px 2px rgba(0,0,0,0.08);
     transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 }
-.delivery-options-row .delivery-radio { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+/* 单选完全隐藏，不占位、不显示，只保留一排按钮 */
+.delivery-radio-hidden {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    clip-path: inset(50%);
+}
+.delivery-options-row { position: relative; }
 .delivery-options-row .delivery-option-btn:first-of-type { margin-left: 0; }
 .delivery-option-btn:hover {
     background: #9ccc65 !important;
