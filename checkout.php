@@ -1,5 +1,11 @@
 <?php
 require_once 'config.php';
+session_start();
+if (!isset($_SESSION['customer_id'])) {
+    header('Location: ' . (SITE_URL ? SITE_URL . '/' : '') . 'login.php?from=checkout');
+    exit;
+}
+
 $pageTitle = '确认订单 - 烟花网购';
 require_once 'includes/header.php';
 
@@ -17,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($cart as $item) $total += ($item['price']??0) * ($item['quantity']??1);
         $pdo->beginTransaction();
         try {
-            $pdo->prepare("INSERT INTO orders (order_no, customer_name, customer_phone, customer_address, total_amount, remark) VALUES (?,?,?,?,?,?)")
-                ->execute([$orderNo, $name, $phone, $address, $total, $remark]);
+            $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, total_amount, remark) VALUES (?,?,?,?,?,?,?)")
+                ->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $address, $total, $remark]);
             $orderId = $pdo->lastInsertId();
             $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) VALUES (?,?,?,?,?,?)");
             foreach ($cart as $item) {
@@ -28,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $pdo->commit();
             echo '<div class="alert alert-success">下单成功！订单号：' . htmlspecialchars($orderNo) . '</div>';
-            echo '<p><a href="' . SITE_URL . '/index.php" class="btn btn-primary">返回首页</a></p>';
+            echo '<p><a href="' . (SITE_URL ? SITE_URL . '/' : '') . 'index.php" class="btn btn-primary">返回首页</a></p>';
             echo '<script>localStorage.removeItem("cart");</script>';
             require_once 'includes/footer.php';
             exit;
@@ -39,21 +45,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<?php
+$cust = null;
+if (!empty($_SESSION['customer_id'])) {
+    $c = $pdo->prepare("SELECT name, phone, address FROM customers WHERE id = ?");
+    $c->execute([$_SESSION['customer_id']]);
+    $cust = $c->fetch();
+}
+?>
 <main>
     <h2>确认订单</h2>
     <form method="post" action="">
         <input type="hidden" name="cart_json" id="cartJson" value="">
         <div class="form-group">
             <label>收货人 *</label>
-            <input type="text" name="customer_name" required placeholder="姓名">
+            <input type="text" name="customer_name" required placeholder="姓名" value="<?php echo htmlspecialchars($cust['name'] ?? ''); ?>">
         </div>
         <div class="form-group">
             <label>联系电话 *</label>
-            <input type="text" name="customer_phone" required placeholder="手机号">
+            <input type="text" name="customer_phone" required placeholder="手机号" value="<?php echo htmlspecialchars($cust['phone'] ?? ''); ?>">
         </div>
         <div class="form-group">
             <label>收货地址 *</label>
-            <textarea name="customer_address" required placeholder="详细地址"></textarea>
+            <textarea name="customer_address" required placeholder="详细地址"><?php echo htmlspecialchars($cust['address'] ?? ''); ?></textarea>
         </div>
         <div class="form-group">
             <label>备注</label>

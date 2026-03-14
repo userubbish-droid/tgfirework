@@ -5,9 +5,9 @@
 ## 功能
 
 **前台（顾客）**
-- 首页商品列表、按分类筛选
-- 商品详情、加入购物车
-- 购物车、填写收货信息提交订单
+- **普通客户**：注册后即可登录、下单购物
+- **Agent（批发）**：可前台「申请批发」或由后台在客户管理中「提升为 Agent」；申请后需后台审核通过
+- 首页商品列表、按分类筛选；商品详情、加入购物车；购物车 → 去结算；我的订单
 
 **后台（管理员）**
 - 登录 / 退出
@@ -33,6 +33,9 @@
 
 4. 确保 `uploads/` 目录可写（商品图片上传）。
 
+5. **已上线的站加“客户注册”**：在 phpMyAdmin 中导入 `upgrade_register.sql`，会新增 `customers` 表及订单表字段。  
+6. **普通客户 / Agent(批发)**：在 phpMyAdmin 中导入 `upgrade_agent.sql`，为 customers 表增加 `role`、`agent_status`；普通客户注册即可购物，Agent 需申请或由管理员提升并可选审核。
+
 ## 访问
 
 - 前台：`http://你的域名/tg/index.php`
@@ -45,7 +48,7 @@
 tg/
 ├── config.php
 ├── install.sql
-├── index.php, product.php, cart.php, checkout.php
+├── index.php, product.php, cart.php, checkout.php, login.php, register.php, logout.php, my_orders.php, order_detail.php
 ├── includes/header.php, footer.php
 ├── admin/login.php, logout.php, index.php, products.php, orders.php, order_detail.php
 ├── assets/css/style.css, admin.css

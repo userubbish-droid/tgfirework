@@ -8,6 +8,20 @@ CREATE TABLE IF NOT EXISTS admins (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 客户：普通客户=注册即可购物；Agent(批发)=需申请或由管理员提升，可单独审核
+CREATE TABLE IF NOT EXISTS customers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(50) NOT NULL,
+    phone VARCHAR(20) NOT NULL DEFAULT '',
+    address TEXT,
+    role ENUM('customer','agent') NOT NULL DEFAULT 'customer' COMMENT 'customer=普通客户 agent=批发',
+    status ENUM('pending','approved') NOT NULL DEFAULT 'approved' COMMENT '账号是否可登录',
+    agent_status ENUM('pending','approved') DEFAULT NULL COMMENT '仅agent: 申请待审核/已通过',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 分类
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -30,10 +44,11 @@ CREATE TABLE IF NOT EXISTS products (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
 );
 
--- 订单
+-- 订单（customer_id 为登录用户 id，可为空兼容旧订单）
 CREATE TABLE IF NOT EXISTS orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_no VARCHAR(32) NOT NULL UNIQUE,
+    customer_id INT DEFAULT NULL,
     customer_name VARCHAR(100) NOT NULL,
     customer_phone VARCHAR(20) NOT NULL,
     customer_address TEXT NOT NULL,
@@ -41,7 +56,8 @@ CREATE TABLE IF NOT EXISTS orders (
     status ENUM('pending','paid','shipped','completed','cancelled') DEFAULT 'pending',
     remark TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL
 );
 
 -- 订单明细

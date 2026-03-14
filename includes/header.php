@@ -13,6 +13,19 @@
         <nav class="site-nav">
             <a href="<?php echo SITE_URL; ?>/index.php">首页</a>
             <a href="<?php echo SITE_URL; ?>/cart.php" class="cart-link" id="cartLink">购物车</a>
+            <?php if (!empty($_SESSION['customer_id'])): ?>
+                <a href="<?php echo SITE_URL; ?>/my_orders.php">我的订单</a>
+                <?php if (($_SESSION['customer_role'] ?? 'customer') === 'customer'): ?>
+                    <a href="<?php echo SITE_URL; ?>/apply_agent.php">申请批发</a>
+                <?php elseif (($_SESSION['customer_role'] ?? '') === 'agent'): ?>
+                    <span style="color:#d4af37;">批发客户</span>
+                <?php endif; ?>
+                <span style="color:rgba(255,255,255,0.9);"><?php echo htmlspecialchars($_SESSION['customer_name'] ?? $_SESSION['customer_email']); ?></span>
+                <a href="<?php echo SITE_URL; ?>/logout.php">退出</a>
+            <?php else: ?>
+                <a href="<?php echo SITE_URL; ?>/login.php">登录</a>
+                <a href="<?php echo SITE_URL; ?>/register.php">注册</a>
+            <?php endif; ?>
         </nav>
     </div>
 </header>

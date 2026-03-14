@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+session_start();
 $pageTitle = '购物车 - 烟花网购';
 require_once 'includes/header.php';
 ?>

@@ -10,6 +10,17 @@ $todayOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE DATE(created_at) =
 $todaySales = $pdo->query("SELECT COALESCE(SUM(total_amount),0) FROM orders WHERE DATE(created_at) = '$today' AND status != 'cancelled'")->fetchColumn();
 $productCount = $pdo->query("SELECT COUNT(*) FROM products WHERE is_active = 1")->fetchColumn();
 $pendingOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pending'")->fetchColumn();
+$pendingCustomers = 0;
+try {
+    $cols = $pdo->query("SHOW COLUMNS FROM customers")->fetchAll(PDO::FETCH_COLUMN);
+    if (in_array('agent_status', $cols)) {
+        $pc = $pdo->query("SELECT COUNT(*) FROM customers WHERE role = 'agent' AND agent_status = 'pending'");
+        if ($pc) $pendingCustomers = (int)$pc->fetchColumn();
+    } else {
+        $pc = $pdo->query("SELECT COUNT(*) FROM customers WHERE status = 'pending'");
+        if ($pc) $pendingCustomers = (int)$pc->fetchColumn();
+    }
+} catch (Exception $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -27,6 +38,7 @@ $pendingOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pendin
         <a href="index.php" class="active">仪表盘</a>
         <a href="products.php">商品管理</a>
         <a href="orders.php">订单管理</a>
+        <a href="customers.php">客户管理<?php if ($pendingCustomers > 0): ?> (<?php echo $pendingCustomers; ?> 待审核)<?php endif; ?></a>
         <a href="<?php echo SITE_URL; ?>/index.php" target="_blank">访问前台</a>
         <a href="logout.php">退出登录</a>
     </aside>
@@ -58,6 +70,7 @@ $pendingOrders = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'pendin
             <p>
                 <a href="products.php?action=add" class="btn btn-primary btn-sm">添加商品</a>
                 <a href="orders.php" class="btn btn-sm" style="background:#eee;">查看订单</a>
+                <a href="customers.php?status=pending" class="btn btn-sm" style="background:#eee;">注册审核</a>
             </p>
         </div>
     </main>
