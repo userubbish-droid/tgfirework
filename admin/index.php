@@ -39,6 +39,7 @@ try {
         <a href="products.php">商品管理</a>
         <a href="orders.php">订单管理</a>
         <a href="customers.php">客户管理<?php if ($pendingCustomers > 0): ?> (<?php echo $pendingCustomers; ?> 待审核)<?php endif; ?></a>
+        <a href="change_password.php">修改密码</a>
         <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
         <a href="logout.php">退出登录</a>
     </aside>
@@ -71,6 +72,7 @@ try {
                 <a href="products.php?action=add" class="btn btn-primary btn-sm">添加商品</a>
                 <a href="orders.php" class="btn btn-sm" style="background:#eee;">查看订单</a>
                 <a href="customers.php?status=pending" class="btn btn-sm" style="background:#eee;">注册审核</a>
+                <a href="change_password.php" class="btn btn-sm" style="background:#eee;">修改密码</a>
             </p>
         </div>
     </main>

@@ -13,15 +13,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $phone = preg_replace('/\s+/', '', $phone);
+    $phoneNormalized = preg_replace('/\D/', '', $phone);
     if (!$phone || !$password || !$name) {
         $error = '请填写手机号、密码和姓名';
-    } elseif (!preg_match('/^1[3-9]\d{9}$/', $phone) && !preg_match('/^\d{10,15}$/', $phone)) {
-        $error = '请填写正确的手机号';
+    } elseif (strlen($phoneNormalized) < 10 || strlen($phoneNormalized) > 15) {
+        $error = '请填写正确的手机号（10～15 位数字，可带 + 或空格）';
     } elseif (strlen($password) < 6) {
         $error = '密码至少 6 位';
     } else {
         $stmt = $pdo->prepare("SELECT id FROM customers WHERE phone = ?");
-        $stmt->execute([$phone]);
+        $stmt->execute([$phoneNormalized]);
         if ($stmt->fetch()) {
             $error = '该手机号已注册，请直接登录';
         } else {
@@ -29,14 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $emailVal = $email !== '' ? $email : null;
             try {
                 $pdo->prepare("INSERT INTO customers (phone, email, password, name, role, status) VALUES (?, ?, ?, ?, 'customer', 'approved')")
-                    ->execute([$phone, $emailVal, $hash, $name]);
+                    ->execute([$phoneNormalized, $emailVal, $hash, $name]);
             } catch (Exception $e) {
                 $pdo->prepare("INSERT INTO customers (phone, email, password, name, status) VALUES (?, ?, ?, ?, 'approved')")
-                    ->execute([$phone, $emailVal, $hash, $name]);
+                    ->execute([$phoneNormalized, $emailVal, $hash, $name]);
             }
             $_SESSION['customer_id'] = $pdo->lastInsertId();
             $_SESSION['customer_role'] = 'customer';
-            $_SESSION['customer_phone'] = $phone;
+            $_SESSION['customer_phone'] = $phoneNormalized;
             $_SESSION['customer_name'] = $name;
             $to = isset($_GET['from']) ? $_GET['from'] : 'index';
             if ($to === 'checkout') {
@@ -60,7 +61,7 @@ require_once 'includes/header.php';
     <form method="post" style="max-width:400px;">
         <div class="form-group">
             <label>手机号 *</label>
-            <input type="tel" name="phone" required value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>" placeholder="用于登录，11 位手机号">
+            <input type="tel" name="phone" required value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>" placeholder="支持 +60、+86 等，10～15 位数字">
         </div>
         <div class="form-group">
             <label>密码 *</label>

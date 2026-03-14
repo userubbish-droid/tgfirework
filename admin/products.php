@@ -76,6 +76,7 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
         <a href="products.php" class="active">商品管理</a>
         <a href="orders.php">订单管理</a>
         <a href="customers.php">客户管理</a>
+        <a href="change_password.php">修改密码</a>
         <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
         <a href="logout.php">退出登录</a>
     </aside>

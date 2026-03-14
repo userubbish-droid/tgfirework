@@ -14,6 +14,7 @@ if (isset($_SESSION['customer_id'])) {
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $phone = trim($_POST['phone'] ?? '');
+    $phone = preg_replace('/\D/', '', $phone);
     $password = $_POST['password'] ?? '';
     if (!$phone || !$password) {
         $error = '请填写手机号和密码';
