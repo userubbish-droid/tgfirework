@@ -80,9 +80,11 @@ if (!empty($_SESSION['customer_id'])) {
         <input type="hidden" name="cart_json" id="cartJson" value="">
         <div class="form-group">
             <label>配送方式 *</label>
-            <label class="delivery-option"><input type="radio" name="delivery_type" value="self_pickup" required> 自取</label>
-            <label class="delivery-option"><input type="radio" name="delivery_type" value="lalamove"> Lalamove</label>
-            <label class="delivery-option"><input type="radio" name="delivery_type" value="mail"> 邮寄</label>
+            <div class="delivery-options-row">
+                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="self_pickup" required> 自取</label>
+                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="lalamove"> Lalamove</label>
+                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="mail"> 邮寄</label>
+            </div>
         </div>
         <div class="form-group">
             <label>收货人 *</label>

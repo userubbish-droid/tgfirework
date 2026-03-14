@@ -210,6 +210,42 @@ main {
 .btn-primary { background: linear-gradient(180deg, #c41e3a 0%, #8b0000 100%); color: #fff; }
 .btn-primary:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); }
 
+/* 配送方式：图2 风格 - 圆角青绿按钮排成一行 */
+.delivery-options-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+}
+.delivery-option-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    background: linear-gradient(180deg, #9ccc65 0%, #8bc34a 50%, #7cb342 100%);
+    color: #333;
+    font-weight: 500;
+    border-radius: 999px;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.25);
+    transition: box-shadow 0.2s, transform 0.15s;
+}
+.delivery-option-btn:hover {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.3);
+    transform: translateY(-1px);
+}
+.delivery-option-btn input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.delivery-option-btn:has(input:checked) {
+    background: linear-gradient(180deg, #689f38 0%, #558b2f 50%, #33691e 100%);
+    color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
+}
 .delivery-option { display: inline-block; margin-right: 1rem; margin-bottom: 0.3rem; font-weight: 500; }
 .delivery-option input { margin-right: 0.35rem; }
 
