@@ -80,10 +80,13 @@ if (!empty($_SESSION['customer_id'])) {
         <input type="hidden" name="cart_json" id="cartJson" value="">
         <div class="form-group delivery-method-wrap">
             <label class="form-label">配送方式 *</label>
-            <div class="delivery-options-row">
-                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="self_pickup" required> <span>自取</span></label>
-                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="lalamove"> <span>Lalamove</span></label>
-                <label class="delivery-option-btn"><input type="radio" name="delivery_type" value="mail"> <span>邮寄</span></label>
+            <div class="delivery-options-row" role="group" aria-label="配送方式">
+                <input type="radio" name="delivery_type" id="delivery_self_pickup" value="self_pickup" required class="delivery-radio">
+                <button type="button" class="delivery-option-btn" data-delivery="self_pickup" aria-pressed="false">自取</button>
+                <input type="radio" name="delivery_type" id="delivery_lalamove" value="lalamove" class="delivery-radio">
+                <button type="button" class="delivery-option-btn" data-delivery="lalamove" aria-pressed="false">Lalamove</button>
+                <input type="radio" name="delivery_type" id="delivery_mail" value="mail" class="delivery-radio">
+                <button type="button" class="delivery-option-btn" data-delivery="mail" aria-pressed="false">邮寄</button>
             </div>
         </div>
         <div class="form-group">
@@ -115,15 +118,26 @@ if (!empty($_SESSION['customer_id'])) {
 (function(){
     var row = document.querySelector('.delivery-options-row');
     if(!row) return;
-    var labels = row.querySelectorAll('.delivery-option-btn');
-    function updateSelected(){
-        labels.forEach(function(lab){ lab.classList.remove('delivery-selected'); });
+    var radios = row.querySelectorAll('.delivery-radio');
+    var btns = row.querySelectorAll('.delivery-option-btn');
+    function syncFromRadio(){
         var checked = row.querySelector('input[name="delivery_type"]:checked');
-        if(checked && checked.closest) (checked.closest('.delivery-option-btn')||{}).classList.add('delivery-selected');
+        btns.forEach(function(btn){
+            var v = btn.getAttribute('data-delivery');
+            var isSelected = checked && checked.value === v;
+            btn.classList.toggle('delivery-selected', isSelected);
+            btn.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+        });
     }
-    row.addEventListener('change', updateSelected);
-    row.addEventListener('click', function(e){ setTimeout(updateSelected, 0); });
-    updateSelected();
+    btns.forEach(function(btn){
+        btn.addEventListener('click', function(){
+            var v = this.getAttribute('data-delivery');
+            var r = row.querySelector('input[name="delivery_type"][value="'+v+'"]');
+            if(r){ r.checked = true; syncFromRadio(); }
+        });
+    });
+    radios.forEach(function(r){ r.addEventListener('change', syncFromRadio); });
+    syncFromRadio();
 })();
 </script>
 <?php require_once 'includes/footer.php'; ?>
