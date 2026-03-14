@@ -1,7 +1,5 @@
--- 烟花网购站 - 数据库初始化
-CREATE DATABASE IF NOT EXISTS fireworks_shop DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE fireworks_shop;
-
+-- 烟花网购站 - 表结构及初始数据
+-- 在 phpMyAdmin 中：先左侧选中你的数据库（如 u870568714_tgfirework），再点“导入”选择本文件执行
 -- 管理员
 CREATE TABLE IF NOT EXISTS admins (
     id INT AUTO_INCREMENT PRIMARY KEY,

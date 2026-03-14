@@ -14,5 +14,5 @@ return [
     'dbname'   => 'u870568714_tgfirework',
     'user'     => 'u870568714_tgfirework',
     'password' => 'Tgfirework@996',                // 请在此填写你的数据库密码
-    'site_url' => '/tg',             // 站点在根目录填 ''
+    'site_url' => '',                // 站点在根目录（如 tgfirework.online）填 ''；在子目录填 '/tg'
 ];
