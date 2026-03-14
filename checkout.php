@@ -36,18 +36,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $hasDeliveryCol = false;
             $hasUnitCol = false;
+            $hasCustomerIdCol = false;
             try {
                 $cols = $pdo->query("SHOW COLUMNS FROM orders")->fetchAll(PDO::FETCH_COLUMN);
                 $hasDeliveryCol = in_array('delivery_type', $cols);
+                $hasCustomerIdCol = in_array('customer_id', $cols);
                 $oicols = $pdo->query("SHOW COLUMNS FROM order_items")->fetchAll(PDO::FETCH_COLUMN);
                 $hasUnitCol = in_array('unit', $oicols);
             } catch (Exception $e) {}
-            if ($hasDeliveryCol) {
+            if ($hasCustomerIdCol && $hasDeliveryCol) {
                 $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, delivery_type, total_amount, remark) VALUES (?,?,?,?,?,?,?,?)")
                     ->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $addressVal, $deliveryType ?: null, $total, $remark]);
-            } else {
+            } elseif ($hasCustomerIdCol && !$hasDeliveryCol) {
                 $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, total_amount, remark) VALUES (?,?,?,?,?,?,?)")
                     ->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $addressVal, $total, $remark]);
+            } elseif (!$hasCustomerIdCol && $hasDeliveryCol) {
+                $pdo->prepare("INSERT INTO orders (order_no, customer_name, customer_phone, customer_address, delivery_type, total_amount, remark) VALUES (?,?,?,?,?,?,?)")
+                    ->execute([$orderNo, $name, $phone, $addressVal, $deliveryType ?: null, $total, $remark]);
+            } else {
+                $pdo->prepare("INSERT INTO orders (order_no, customer_name, customer_phone, customer_address, total_amount, remark) VALUES (?,?,?,?,?,?)")
+                    ->execute([$orderNo, $name, $phone, $addressVal, $total, $remark]);
             }
             $orderId = $pdo->lastInsertId();
             foreach ($cart as $item) {
