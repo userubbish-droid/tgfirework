@@ -1,13 +1,13 @@
 <?php
 /**
  * 烟花网购站 - 数据库配置
- * 线上环境请复制 config.local.example.php 为 config.local.php 并填写真实数据库信息
+ * 线上（tgfirework.online）：在服务器上创建 config.local.php，内容只写 <?php return ['password' => '你的数据库密码']; ?>
  */
 $dbConfig = [
     'host'     => 'localhost',
-    'dbname'   => 'fireworks_shop',
-    'user'     => 'root',
-    'password' => '',
+    'dbname'   => 'u870568714_tgfirework',
+    'user'     => 'u870568714_tgfirework',
+    'password' => '',  // 线上必填：在 config.local.php 里写 password
     'charset'  => 'utf8mb4',
 ];
 
