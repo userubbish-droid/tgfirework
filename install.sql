@@ -43,6 +43,11 @@ CREATE TABLE IF NOT EXISTS products (
     allow_self_pickup TINYINT(1) DEFAULT 1,
     allow_lalamove TINYINT(1) DEFAULT 1,
     allow_mail TINYINT(1) DEFAULT 1,
+    sell_type VARCHAR(20) DEFAULT 'piece' COMMENT 'piece=仅散卖 box=仅按箱 both=箱+散',
+    box_pieces INT DEFAULT NULL COMMENT '每箱件数，按箱时用',
+    price_box DECIMAL(10,2) DEFAULT NULL COMMENT '每箱价格',
+    agent_rebate DECIMAL(10,2) DEFAULT NULL COMMENT 'Agent回扣金额，折后价=原价-回扣，不填则显示原价',
+    agent_rebate_box DECIMAL(10,2) DEFAULT NULL COMMENT 'Agent按箱回扣，不填则箱价不变',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
@@ -81,6 +86,7 @@ CREATE TABLE IF NOT EXISTS order_items (
     product_name VARCHAR(200) NOT NULL,
     price DECIMAL(10,2) NOT NULL,
     quantity INT NOT NULL,
+    unit VARCHAR(10) DEFAULT 'piece' COMMENT 'piece=件 box=箱',
     subtotal DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT

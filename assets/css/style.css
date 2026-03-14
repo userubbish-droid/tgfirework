@@ -161,6 +161,9 @@ main {
 .product-detail .meta h1 { margin-bottom: 1rem; color: var(--dark); }
 .product-detail .meta .price { font-size: 1.8rem; color: var(--primary); margin-bottom: 1rem; }
 .product-detail .meta .description { color: #555; margin-bottom: 1.5rem; }
+.product-detail .price-row { display: flex; flex-direction: column; gap: 0.25rem; margin-bottom: 1rem; }
+.product-detail .unit-hint { color: #666; font-size: 0.9em; margin-left: 0.25rem; }
+.cart-unit { color: #666; font-size: 0.9em; }
 .quantity-wrap { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
 .quantity-wrap input {
     width: 80px;

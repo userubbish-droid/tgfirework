@@ -7,7 +7,7 @@ try {
     $categories = $stmt->fetchAll();
 
     $category_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
-    $sql = "SELECT p.id, p.name, p.price, p.stock, p.image, c.name AS category_name 
+    $sql = "SELECT p.*, c.name AS category_name 
             FROM products p 
             LEFT JOIN categories c ON p.category_id = c.id 
             WHERE p.is_active = 1 AND p.stock > 0";
@@ -49,16 +49,20 @@ require_once 'includes/header.php';
         <?php if (empty($products)): ?>
             <p style="grid-column:1/-1; text-align:center; color:#888;">暂无商品</p>
         <?php else: ?>
-            <?php foreach ($products as $p): ?>
+            <?php foreach ($products as $p):
+                $isAgent = isset($_SESSION['customer_role']) && $_SESSION['customer_role'] === 'agent';
+                $rebate = isset($p['agent_rebate']) && $p['agent_rebate'] !== null && $p['agent_rebate'] !== '' ? (float)$p['agent_rebate'] : 0;
+                $priceDisplay = $isAgent && $rebate > 0 ? max(0, (float)$p['price'] - $rebate) : (float)$p['price'];
+            ?>
                 <div class="product-card">
                     <a href="product.php?id=<?php echo $p['id']; ?>">
                         <img src="<?php echo $p['image'] ? (BASE_PATH.'uploads/'.htmlspecialchars($p['image'])) : (BASE_PATH.'assets/img/placeholder.svg'); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23eee%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2216%22%3E暂无图片%3C/text%3E%3C/svg%3E';this.onerror=null;">
                     </a>
                     <div class="info">
                         <div class="name"><?php echo htmlspecialchars($p['name']); ?></div>
-                        <div class="price">¥ <?php echo number_format($p['price'], 2); ?></div>
+                        <div class="price">¥ <?php echo number_format($priceDisplay, 2); ?></div>
                         <div class="stock">库存 <?php echo $p['stock']; ?> 件</div>
-                        <button class="btn-add" onclick="addToCart(<?php echo $p['id']; ?>,'<?php echo htmlspecialchars(addslashes($p['name'])); ?>',<?php echo $p['price']; ?>)" <?php echo $p['stock']<1 ? ' disabled' : ''; ?>>加入购物车</button>
+                        <button class="btn-add" onclick="addToCart(<?php echo $p['id']; ?>,'<?php echo htmlspecialchars(addslashes($p['name'])); ?>',<?php echo $priceDisplay; ?>)" <?php echo $p['stock']<1 ? ' disabled' : ''; ?>>加入购物车</button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -68,8 +72,8 @@ require_once 'includes/header.php';
 <script>
 function addToCart(id,name,price){
     var cart=JSON.parse(localStorage.getItem('cart')||'[]');
-    var i=cart.find(function(x){return x.id==id;});
-    if(i)i.quantity=(i.quantity||1)+1; else cart.push({id:id,name:name,price:price,quantity:1});
+    var i=cart.find(function(x){return x.id==id && (x.unit||'piece')==='piece';});
+    if(i)i.quantity=(i.quantity||1)+1; else cart.push({id:id,name:name,price:price,quantity:1,unit:'piece'});
     localStorage.setItem('cart',JSON.stringify(cart));
     alert('已加入购物车');
     document.getElementById('cartLink').innerHTML='购物车 ('+cart.reduce(function(s,x){return s+(x.quantity||1);},0)+')';

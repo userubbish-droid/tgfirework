@@ -61,9 +61,9 @@ $deliveryLabels = ['self_pickup'=>'自取','lalamove'=>'Lalamove','mail'=>'邮�
                 <tbody>
                     <?php foreach ($items as $i): ?>
                     <tr>
-                        <td><?php echo htmlspecialchars($i['product_name']); ?></td>
-                        <td>¥ <?php echo number_format($i['price'], 2); ?></td>
-                        <td><?php echo $i['quantity']; ?></td>
+                        <td><?php echo htmlspecialchars($i['product_name']); ?><?php echo (isset($i['unit']) && $i['unit']==='box') ? ' <span class="cart-unit">(按箱)</span>' : ''; ?></td>
+                        <td>¥ <?php echo number_format($i['price'], 2); ?><?php echo (isset($i['unit']) && $i['unit']==='box') ? '/箱' : '/件'; ?></td>
+                        <td><?php echo $i['quantity']; ?><?php echo (isset($i['unit']) && $i['unit']==='box') ? ' 箱' : ' 件'; ?></td>
                         <td>¥ <?php echo number_format($i['subtotal'], 2); ?></td>
                     </tr>
                     <?php endforeach; ?>

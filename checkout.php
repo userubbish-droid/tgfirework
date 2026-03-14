@@ -35,9 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pdo->beginTransaction();
         try {
             $hasDeliveryCol = false;
+            $hasUnitCol = false;
             try {
                 $cols = $pdo->query("SHOW COLUMNS FROM orders")->fetchAll(PDO::FETCH_COLUMN);
                 $hasDeliveryCol = in_array('delivery_type', $cols);
+                $oicols = $pdo->query("SHOW COLUMNS FROM order_items")->fetchAll(PDO::FETCH_COLUMN);
+                $hasUnitCol = in_array('unit', $oicols);
             } catch (Exception $e) {}
             if ($hasDeliveryCol) {
                 $pdo->prepare("INSERT INTO orders (order_no, customer_id, customer_name, customer_phone, customer_address, delivery_type, total_amount, remark) VALUES (?,?,?,?,?,?,?,?)")
@@ -47,11 +50,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ->execute([$orderNo, $_SESSION['customer_id'], $name, $phone, $addressVal, $total, $remark]);
             }
             $orderId = $pdo->lastInsertId();
-            $stmt = $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) VALUES (?,?,?,?,?,?)");
             foreach ($cart as $item) {
-                $sub = ($item['price']??0) * ($item['quantity']??1);
-                $stmt->execute([$orderId, $item['id'], $item['name']??'', $item['price']??0, $item['quantity']??1, $sub]);
-                $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ?")->execute([$item['quantity']??1, $item['id']]);
+                $qty = (int)($item['quantity']??1);
+                $price = (float)($item['price']??0);
+                $unit = isset($item['unit']) && $item['unit'] === 'box' ? 'box' : 'piece';
+                $sub = $price * $qty;
+                $deduct = $unit === 'box' && !empty($item['box_pieces']) ? (int)$item['box_pieces'] * $qty : $qty;
+                if ($hasUnitCol) {
+                    $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, unit, subtotal) VALUES (?,?,?,?,?,?,?)")
+                        ->execute([$orderId, $item['id'], $item['name']??'', $price, $qty, $unit, $sub]);
+                } else {
+                    $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) VALUES (?,?,?,?,?,?)")
+                        ->execute([$orderId, $item['id'], $item['name']??'', $price, $qty, $sub]);
+                }
+                $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ?")->execute([$deduct, $item['id']]);
             }
             $pdo->commit();
             echo '<div class="alert alert-success">下单成功！订单号：' . htmlspecialchars($orderNo) . '</div>';
@@ -78,14 +90,14 @@ if (!empty($_SESSION['customer_id'])) {
     <h2>确认订单</h2>
     <form method="post" action="" id="checkoutForm">
         <input type="hidden" name="cart_json" id="cartJson" value="">
+        <div class="delivery-radio-hidden" aria-hidden="true">
+            <input type="radio" name="delivery_type" id="delivery_self_pickup" value="self_pickup" required tabindex="-1">
+            <input type="radio" name="delivery_type" id="delivery_lalamove" value="lalamove" tabindex="-1">
+            <input type="radio" name="delivery_type" id="delivery_mail" value="mail" tabindex="-1">
+        </div>
         <div class="form-group delivery-method-wrap">
             <label class="form-label">配送方式 *</label>
             <div class="delivery-options-row" role="group" aria-label="配送方式">
-                <div class="delivery-radio-hidden" aria-hidden="true">
-                    <input type="radio" name="delivery_type" id="delivery_self_pickup" value="self_pickup" required tabindex="-1">
-                    <input type="radio" name="delivery_type" id="delivery_lalamove" value="lalamove" tabindex="-1">
-                    <input type="radio" name="delivery_type" id="delivery_mail" value="mail" tabindex="-1">
-                </div>
                 <button type="button" class="delivery-option-btn" data-delivery="self_pickup" aria-pressed="false">自取</button>
                 <button type="button" class="delivery-option-btn" data-delivery="lalamove" aria-pressed="false">Lalamove</button>
                 <button type="button" class="delivery-option-btn" data-delivery="mail" aria-pressed="false">邮寄</button>
@@ -118,12 +130,13 @@ if (!empty($_SESSION['customer_id'])) {
     if(cart.length===0){ alert('购物车为空'); location.href='<?php echo BASE_PATH; ?>cart.php'; }
 })();
 (function(){
-    var row = document.querySelector('.delivery-options-row');
+    var form = document.getElementById('checkoutForm');
+    var row = form && form.querySelector('.delivery-options-row');
     if(!row) return;
-    var radios = row.querySelectorAll('input[name="delivery_type"]');
+    var radios = form.querySelectorAll('input[name="delivery_type"]');
     var btns = row.querySelectorAll('.delivery-option-btn');
     function syncFromRadio(){
-        var checked = row.querySelector('input[name="delivery_type"]:checked');
+        var checked = form.querySelector('input[name="delivery_type"]:checked');
         btns.forEach(function(btn){
             var v = btn.getAttribute('data-delivery');
             var isSelected = checked && checked.value === v;
@@ -134,7 +147,7 @@ if (!empty($_SESSION['customer_id'])) {
     btns.forEach(function(btn){
         btn.addEventListener('click', function(){
             var v = this.getAttribute('data-delivery');
-            var r = row.querySelector('input[name="delivery_type"][value="'+v+'"]');
+            var r = form.querySelector('input[name="delivery_type"][value="'+v+'"]');
             if(r){ r.checked = true; syncFromRadio(); }
         });
     });

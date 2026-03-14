@@ -37,8 +37,10 @@ require_once 'includes/header.php';
     cart.forEach(function(item,idx){
         var sub=item.price*(item.quantity||1);
         total+=sub;
+        var unitLabel = (item.unit==='box') ? '箱' : '件';
+        var priceLabel = '¥ '+item.price.toFixed(2)+(item.unit==='box' ? '/箱' : '/件');
         var tr=document.createElement('tr');
-        tr.innerHTML='<td>'+item.name+'</td><td>¥ '+item.price.toFixed(2)+'</td><td><input type="number" min="1" value="'+(item.quantity||1)+'" data-idx="'+idx+'" onchange="updateQty(this)"></td><td>¥ '+sub.toFixed(2)+'</td><td><button onclick="removeItem('+idx+')">删除</button></td>';
+        tr.innerHTML='<td>'+item.name+(item.unit==='box' ? ' <span class="cart-unit">(按箱)</span>' : '')+'</td><td>'+priceLabel+'</td><td><input type="number" min="1" value="'+(item.quantity||1)+'" data-idx="'+idx+'" onchange="updateQty(this)"> '+unitLabel+'</td><td>¥ '+sub.toFixed(2)+'</td><td><button onclick="removeItem('+idx+')">删除</button></td>';
         body.appendChild(tr);
     });
     totalEl.textContent='¥ '+total.toFixed(2);
