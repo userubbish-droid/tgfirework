@@ -19,10 +19,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $deliveryType = trim($_POST['delivery_type'] ?? '');
     $cart = json_decode($_POST['cart_json'] ?? '[]', true);
     $productIds = array_map(function($i) { return (int)($i['id'] ?? 0); }, is_array($cart) ? $cart : []);
-    $productIds = array_filter($productIds);
+    $productIds = array_unique(array_filter($productIds));
     $allowedDelivery = getAllowedDeliveryTypes($pdo, $productIds);
+    $validProductIds = [];
+    if (!empty($productIds)) {
+        $placeholders = implode(',', array_fill(0, count($productIds), '?'));
+        $stmt = $pdo->prepare("SELECT id FROM products WHERE id IN ($placeholders) AND is_active = 1");
+        $stmt->execute(array_values($productIds));
+        $validProductIds = array_map('intval', $stmt->fetchAll(PDO::FETCH_COLUMN));
+    }
     if (!$name || !$phone || !is_array($cart) || empty($cart)) {
         echo '<div class="alert alert-error">请填写收货人、电话且购物车不能为空。</div>';
+    } elseif (count($productIds) !== count($validProductIds)) {
+        echo '<div class="alert alert-error">购物车中有商品已下架或不存在，请返回购物车核对后重试。</div>';
     } elseif (!in_array($deliveryType, $allowedDelivery, true)) {
         echo '<div class="alert alert-error">请选择有效的配送方式。</div>';
     } elseif ($deliveryType !== 'self_pickup' && $address === '') {
@@ -59,6 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $orderId = $pdo->lastInsertId();
             foreach ($cart as $item) {
+                $pid = (int)($item['id'] ?? 0);
+                if ($pid <= 0 || !in_array($pid, $validProductIds, true)) {
+                    throw new Exception('购物车中有商品无效或已下架，请返回购物车核对。');
+                }
                 $qty = (int)($item['quantity']??1);
                 $price = (float)($item['price']??0);
                 $unit = isset($item['unit']) && $item['unit'] === 'box' ? 'box' : 'piece';
@@ -66,12 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $deduct = $unit === 'box' && !empty($item['box_pieces']) ? (int)$item['box_pieces'] * $qty : $qty;
                 if ($hasUnitCol) {
                     $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, unit, subtotal) VALUES (?,?,?,?,?,?,?)")
-                        ->execute([$orderId, $item['id'], $item['name']??'', $price, $qty, $unit, $sub]);
+                        ->execute([$orderId, $pid, $item['name']??'', $price, $qty, $unit, $sub]);
                 } else {
                     $pdo->prepare("INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal) VALUES (?,?,?,?,?,?)")
-                        ->execute([$orderId, $item['id'], $item['name']??'', $price, $qty, $sub]);
+                        ->execute([$orderId, $pid, $item['name']??'', $price, $qty, $sub]);
                 }
-                $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ?")->execute([$deduct, $item['id']]);
+                $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id = ?")->execute([$deduct, $pid]);
             }
             $pdo->commit();
             echo '<div class="alert alert-success">下单成功！订单号：' . htmlspecialchars($orderNo) . '</div>';
