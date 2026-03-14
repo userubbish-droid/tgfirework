@@ -7,7 +7,7 @@ $dbConfig = [
     'host'     => 'localhost',
     'dbname'   => 'u870568714_tgfirework',
     'user'     => 'u870568714_tgfirework',
-    'password' => '',  // 线上必填：在 config.local.php 里写 password
+    'password' => 'Tgfirework@996',  // 线上必填：在 config.local.php 里写 password
     'charset'  => 'utf8mb4',
 ];
 
@@ -16,6 +16,10 @@ if (file_exists(__DIR__ . '/config.local.php')) {
     if (is_array($local)) {
         $dbConfig = array_merge($dbConfig, $local);
     }
+}
+// 若主机支持环境变量，可在面板中设置 DB_PASSWORD，无需 config.local.php
+if (getenv('DB_PASSWORD') !== false) {
+    $dbConfig['password'] = getenv('DB_PASSWORD');
 }
 
 $dsn = 'mysql:host=' . $dbConfig['host'] . ';dbname=' . $dbConfig['dbname'] . ';charset=' . $dbConfig['charset'];
