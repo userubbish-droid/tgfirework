@@ -82,6 +82,7 @@ main {
 .hero h1 { color: var(--dark); font-size: 2rem; margin-bottom: 0.5rem; }
 .hero p { color: #666; }
 
+/* 首页横幅：固定格子 600×400，图片填满裁剪 */
 .hero-banner {
     width: 600px;
     height: 400px;
@@ -184,14 +185,14 @@ main {
 }
 .category-icon {
     display: block;
-    width: 70px;
-    height: 70px;
+    width: 72px;
+    height: 72px;
     margin: 0 auto 0.4rem;
     border-radius: 12px;
     overflow: hidden;
     background: #f5f5f5;
     font-size: 1.5rem;
-    line-height: 70px;
+    line-height: 72px;
     font-weight: bold;
     color: var(--primary);
 }
@@ -208,7 +209,7 @@ main {
 }
 .category-icon-all {
     font-size: 1rem;
-    line-height: 70px;
+    line-height: 72px;
 }
 .category-name-en {
     display: block;
@@ -253,10 +254,11 @@ main {
     .hero {
         padding: 1.2rem 0 1.4rem;
     }
+    /* 手机端也固定格子：宽 100%，高 220px */
     .hero-banner {
         width: 100%;
-        height: auto;
-        max-height: 220px;
+        height: 220px;
+        max-width: none;
     }
     .products-grid {
         grid-template-columns: 1fr 1fr;
