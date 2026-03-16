@@ -47,76 +47,47 @@ require_once 'includes/header.php';
 ?>
 
 <main>
-    <div class="home-layout">
-        <!-- 左侧：分类 / 登录区 -->
-        <aside class="home-sidebar">
-            <div class="sidebar-card">
-                <h3 class="sidebar-title">Category 分类</h3>
-                <nav class="sidebar-categories">
-                    <a href="index.php" class="<?php echo !$category_id ? 'active' : ''; ?>">全部商品</a>
-                    <?php foreach ($categories as $c): ?>
-                        <a href="index.php?category=<?php echo $c['id']; ?>" class="<?php echo $category_id == $c['id'] ? 'active' : ''; ?>">
-                            <?php echo htmlspecialchars($c['name']); ?>
-                        </a>
-                    <?php endforeach; ?>
-                </nav>
-            </div>
-            <div class="sidebar-card sidebar-login">
-                <?php if (!empty($_SESSION['customer_id'])): ?>
-                    <div class="sidebar-user-name">
-                        欢迎，<?php echo htmlspecialchars($_SESSION['customer_name'] ?? $_SESSION['customer_phone'] ?? ''); ?>
+    <div class="hero">
+        <h1>烟花网购站</h1>
+        <p>安全合规 · 品质保证 · 送货上门</p>
+    </div>
+    <div class="categories">
+        <a href="index.php" class="<?php echo !$category_id ? 'active' : ''; ?>">全部</a>
+        <?php foreach ($categories as $c): ?>
+            <a href="index.php?category=<?php echo $c['id']; ?>" class="<?php echo $category_id == $c['id'] ? 'active' : ''; ?>">
+                <?php echo htmlspecialchars($c['name']); ?>
+            </a>
+        <?php endforeach; ?>
+    </div>
+    <div class="products-grid">
+        <?php if (empty($products)): ?>
+            <p style="grid-column:1/-1; text-align:center; color:#888;">暂无商品</p>
+        <?php else: ?>
+            <?php foreach ($products as $p):
+                $isAgent = isset($_SESSION['customer_role']) && $_SESSION['customer_role'] === 'agent';
+                $rebate = 0;
+                if ($isAgent) {
+                    if (isset($agent_rebate_map[$p['id']]) && $agent_rebate_map[$p['id']] > 0) {
+                        $rebate = $agent_rebate_map[$p['id']];
+                    } elseif (isset($_SESSION['agent_default_rebate']) && $_SESSION['agent_default_rebate'] !== null) {
+                        $rebate = (float)$_SESSION['agent_default_rebate'];
+                    }
+                }
+                $priceDisplay = $isAgent && $rebate > 0 ? max(0, (float)$p['price'] - $rebate) : (float)$p['price'];
+            ?>
+                <div class="product-card">
+                    <a href="product.php?id=<?php echo $p['id']; ?>">
+                        <img src="<?php echo $p['image'] ? (BASE_PATH.'uploads/'.htmlspecialchars($p['image'])) : (BASE_PATH.'assets/img/placeholder.svg'); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23eee%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2216%22%3E暂无图片%3C/text%3E%3C/svg%3E';this.onerror=null;">
+                    </a>
+                    <div class="info">
+                        <div class="name"><?php echo htmlspecialchars($p['name']); ?></div>
+                        <div class="price">¥ <?php echo number_format($priceDisplay, 2); ?></div>
+                        <div class="stock">库存 <?php echo $p['stock']; ?> 件</div>
+                        <button class="btn-add" onclick="addToCart(<?php echo $p['id']; ?>,'<?php echo htmlspecialchars(addslashes($p['name'])); ?>',<?php echo $priceDisplay; ?>)" <?php echo $p['stock']<1 ? ' disabled' : ''; ?>>加入购物车</button>
                     </div>
-                    <div class="sidebar-user-links">
-                        <a href="<?php echo BASE_PATH; ?>my_orders.php">我的订单</a>
-                        <a href="<?php echo BASE_PATH; ?>change_password.php">修改密码</a>
-                    </div>
-                <?php else: ?>
-                    <div class="sidebar-user-name">登录后可查看订单</div>
-                    <div class="sidebar-user-links">
-                        <a href="<?php echo BASE_PATH; ?>login.php">登录</a>
-                        <a href="<?php echo BASE_PATH; ?>register.php">注册</a>
-                    </div>
-                <?php endif; ?>
-            </div>
-        </aside>
-
-        <!-- 右侧：横幅 + 商品网格 -->
-        <section class="home-main">
-            <div class="hero">
-                <h1>烟花网购站</h1>
-                <p>新年烟花 · 批发零售 · 安全配送</p>
-            </div>
-            <div class="products-grid">
-                <?php if (empty($products)): ?>
-                    <p style="grid-column:1/-1; text-align:center; color:#888;">暂无商品</p>
-                <?php else: ?>
-                    <?php foreach ($products as $p):
-                        $isAgent = isset($_SESSION['customer_role']) && $_SESSION['customer_role'] === 'agent';
-                        $rebate = 0;
-                        if ($isAgent) {
-                            if (isset($agent_rebate_map[$p['id']]) && $agent_rebate_map[$p['id']] > 0) {
-                                $rebate = $agent_rebate_map[$p['id']];
-                            } elseif (isset($_SESSION['agent_default_rebate']) && $_SESSION['agent_default_rebate'] !== null) {
-                                $rebate = (float)$_SESSION['agent_default_rebate'];
-                            }
-                        }
-                        $priceDisplay = $isAgent && $rebate > 0 ? max(0, (float)$p['price'] - $rebate) : (float)$p['price'];
-                    ?>
-                        <div class="product-card">
-                            <a href="product.php?id=<?php echo $p['id']; ?>">
-                                <img src="<?php echo $p['image'] ? (BASE_PATH.'uploads/'.htmlspecialchars($p['image'])) : (BASE_PATH.'assets/img/placeholder.svg'); ?>" alt="<?php echo htmlspecialchars($p['name']); ?>" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23eee%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22 font-size=%2216%22%3E暂无图片%3C/text%3E%3C/svg%3E';this.onerror=null;">
-                            </a>
-                            <div class="info">
-                                <div class="name"><?php echo htmlspecialchars($p['name']); ?></div>
-                                <div class="price">¥ <?php echo number_format($priceDisplay, 2); ?></div>
-                                <div class="stock">库存 <?php echo $p['stock']; ?> 件</div>
-                                <button class="btn-add" onclick="addToCart(<?php echo $p['id']; ?>,'<?php echo htmlspecialchars(addslashes($p['name'])); ?>',<?php echo $priceDisplay; ?>)" <?php echo $p['stock']<1 ? ' disabled' : ''; ?>>加入购物车</button>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </div>
-        </section>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </main>
 <script>
