@@ -45,24 +45,33 @@ if (!empty($products) && isset($_SESSION['customer_id'], $_SESSION['customer_rol
 $pageTitle = '首页 - 烟花网购';
 require_once 'includes/header.php';
 
-// 读取首页横幅设置
-$homeBanner = '';
+// 读取首页轮播横幅
+$homeBanners = [];
 try {
-    $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = 'home_banner_image' LIMIT 1");
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    if ($row && !empty($row['setting_value'])) {
-        $homeBanner = $row['setting_value'];
-    }
+    $stmt = $pdo->query("SELECT image FROM home_banners WHERE is_active = 1 ORDER BY sort_order, id");
+    $homeBanners = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch (Exception $e) {
-    // 忽略错误，保持兼容
+    $homeBanners = [];
 }
 ?>
 
 <main>
     <div class="hero">
-        <?php if ($homeBanner): ?>
-            <img src="<?php echo BASE_PATH . htmlspecialchars($homeBanner); ?>" alt="首页横幅" class="hero-banner">
+        <?php if (!empty($homeBanners)): ?>
+            <div class="hero-slider" id="heroSlider">
+                <?php foreach ($homeBanners as $idx => $img): ?>
+                    <div class="hero-slide<?php echo $idx === 0 ? ' active' : ''; ?>">
+                        <img src="<?php echo BASE_PATH . htmlspecialchars($img); ?>" alt="首页横幅" class="hero-banner">
+                    </div>
+                <?php endforeach; ?>
+                <?php if (count($homeBanners) > 1): ?>
+                    <div class="hero-dots">
+                        <?php foreach ($homeBanners as $idx => $img): ?>
+                            <button type="button" class="hero-dot<?php echo $idx === 0 ? ' active' : ''; ?>" data-index="<?php echo $idx; ?>"></button>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
         <?php else: ?>
             <h1>烟花网购站</h1>
             <p>安全合规 · 品质保证 · 送货上门</p>
@@ -108,6 +117,49 @@ try {
     </div>
 </main>
 <script>
+// 首页横幅轮播
+(function(){
+    var slider = document.getElementById('heroSlider');
+    if (!slider) return;
+    var slides = slider.querySelectorAll('.hero-slide');
+    var dots = slider.querySelectorAll('.hero-dot');
+    if (slides.length <= 1) return;
+    var index = 0;
+    var timer = null;
+
+    function show(i) {
+        index = i;
+        slides.forEach(function(s, idx){
+            s.classList.toggle('active', idx === index);
+        });
+        dots.forEach(function(d, idx){
+            d.classList.toggle('active', idx === index);
+        });
+    }
+    function start() {
+        stop();
+        timer = setInterval(function(){
+            var next = (index + 1) % slides.length;
+            show(next);
+        }, 4000);
+    }
+    function stop() {
+        if (timer) {
+            clearInterval(timer);
+            timer = null;
+        }
+    }
+    slider.addEventListener('mouseenter', stop);
+    slider.addEventListener('mouseleave', start);
+    dots.forEach(function(d){
+        d.addEventListener('click', function(){
+            var i = parseInt(this.getAttribute('data-index') || '0', 10);
+            show(i);
+        });
+    });
+    start();
+})();
+
 function addToCart(id,name,price){
     var cart=JSON.parse(localStorage.getItem('cart')||'[]');
     var i=cart.find(function(x){return x.id==id && (x.unit||'piece')==='piece';});
