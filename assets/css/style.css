@@ -82,9 +82,9 @@ main {
 .hero h1 { color: var(--dark); font-size: 2rem; margin-bottom: 0.5rem; }
 .hero p { color: #666; }
 
-/* 固定尺寸横幅容器（类似 div.banner）：600×400，图片在容器内裁剪 */
+/* 固定尺寸横幅容器（类似 div.banner）：400×400，图片在容器内裁剪 */
 .banner {
-    width: 600px;
+    width: 400px;
     height: 400px;
     max-width: 100%;
     margin: 0 auto;
