@@ -153,6 +153,8 @@ if ($hasIconCols) {
                             <td><?php echo (int)($c['sort_order'] ?? 0); ?></td>
                             <td>
                                 <a href="#edit-<?php echo $c['id']; ?>">编辑</a>
+                                <span style="margin:0 0.25rem;">|</span>
+                                <a href="categories.php?delete=<?php echo $c['id']; ?>" onclick="return confirm('确定删除该分类？仅在该分类下没有商品时可以删除。');">删除</a>
                             </td>
                         </tr>
                         <?php endforeach; ?>
