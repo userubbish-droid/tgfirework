@@ -41,6 +41,7 @@ try {
         <a href="customers.php">客户管理<?php if ($pendingCustomers > 0): ?> (<?php echo $pendingCustomers; ?> 待审核)<?php endif; ?></a>
         <a href="agent_rebate.php">Agent 回扣</a>
         <a href="delivery_settings.php">配送设置</a>
+        <a href="banner.php">首页横幅 Banner</a>
         <a href="change_password.php">修改密码</a>
         <a href="<?php echo BASE_PATH; ?>index.php" target="_blank">访问前台</a>
         <a href="logout.php">退出登录</a>

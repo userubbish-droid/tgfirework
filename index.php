@@ -44,12 +44,29 @@ if (!empty($products) && isset($_SESSION['customer_id'], $_SESSION['customer_rol
 }
 $pageTitle = '首页 - 烟花网购';
 require_once 'includes/header.php';
+
+// 读取首页横幅设置
+$homeBanner = '';
+try {
+    $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = 'home_banner_image' LIMIT 1");
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($row && !empty($row['setting_value'])) {
+        $homeBanner = $row['setting_value'];
+    }
+} catch (Exception $e) {
+    // 忽略错误，保持兼容
+}
 ?>
 
 <main>
     <div class="hero">
-        <h1>烟花网购站</h1>
-        <p>安全合规 · 品质保证 · 送货上门</p>
+        <?php if ($homeBanner): ?>
+            <img src="<?php echo BASE_PATH . htmlspecialchars($homeBanner); ?>" alt="首页横幅" class="hero-banner">
+        <?php else: ?>
+            <h1>烟花网购站</h1>
+            <p>安全合规 · 品质保证 · 送货上门</p>
+        <?php endif; ?>
     </div>
     <div class="categories">
         <a href="index.php" class="<?php echo !$category_id ? 'active' : ''; ?>">全部</a>
