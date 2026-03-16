@@ -3,8 +3,10 @@ require_once 'config.php';
 session_start();
 
 try {
-    $stmt = $pdo->query("SELECT id, name FROM categories ORDER BY sort_order, id");
-    $categories = $stmt->fetchAll();
+    $catCols = $pdo->query("SHOW COLUMNS FROM categories")->fetchAll(PDO::FETCH_COLUMN);
+    $hasCatIcon = in_array('image', $catCols) && in_array('name_en', $catCols);
+    $catSql = "SELECT id, name" . ($hasCatIcon ? ", image, name_en" : "") . " FROM categories ORDER BY sort_order, id";
+    $categories = $pdo->query($catSql)->fetchAll(PDO::FETCH_ASSOC);
 
     $category_id = isset($_GET['category']) ? (int)$_GET['category'] : null;
     $sql = "SELECT p.*, c.name AS category_name 
@@ -77,6 +79,30 @@ try {
             <p>安全合规 · 品质保证 · 送货上门</p>
         <?php endif; ?>
     </div>
+    <?php
+    $useCategoryCards = $hasCatIcon && array_reduce($categories, function($carry, $c) { return $carry || !empty($c['image']); }, false);
+    ?>
+    <?php if ($useCategoryCards): ?>
+    <div class="category-cards-wrap">
+        <div class="category-cards">
+            <a href="index.php" class="category-card<?php echo !$category_id ? ' active' : ''; ?>">
+                <span class="category-icon category-icon-all">全部</span>
+                <span class="category-name-en">ALL</span>
+                <span class="category-name">全部商品</span>
+            </a>
+            <?php foreach ($categories as $c):
+                $imgSrc = !empty($c['image']) ? (BASE_PATH . 'uploads/' . $c['image']) : (BASE_PATH . 'assets/img/placeholder.svg');
+            ?>
+                <a href="index.php?category=<?php echo $c['id']; ?>" class="category-card<?php echo $category_id == $c['id'] ? ' active' : ''; ?>">
+                    <span class="category-icon"><img src="<?php echo htmlspecialchars($imgSrc); ?>" alt="" onerror="this.style.display='none';var n=this.parentElement.nextElementSibling;if(n)n.classList.add('show');"></span>
+                    <span class="category-icon category-icon-fallback"><?php echo htmlspecialchars(mb_substr($c['name'], 0, 1)); ?></span>
+                    <span class="category-name-en"><?php echo htmlspecialchars($c['name_en'] ?? $c['name']); ?></span>
+                    <span class="category-name"><?php echo htmlspecialchars($c['name']); ?></span>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <?php else: ?>
     <div class="categories">
         <a href="index.php" class="<?php echo !$category_id ? 'active' : ''; ?>">全部</a>
         <?php foreach ($categories as $c): ?>
@@ -85,6 +111,7 @@ try {
             </a>
         <?php endforeach; ?>
     </div>
+    <?php endif; ?>
     <div class="products-grid">
         <?php if (empty($products)): ?>
             <p style="grid-column:1/-1; text-align:center; color:#888;">暂无商品</p>

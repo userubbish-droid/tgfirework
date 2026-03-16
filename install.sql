@@ -23,10 +23,12 @@ CREATE TABLE IF NOT EXISTS customers (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 分类
+-- 分类（name=中文名，name_en=英文/第一行，image=图标）
 CREATE TABLE IF NOT EXISTS categories (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
+    image VARCHAR(255) DEFAULT NULL,
+    name_en VARCHAR(100) DEFAULT NULL,
     sort_order INT DEFAULT 0
 );
 
@@ -112,8 +114,6 @@ CREATE TABLE IF NOT EXISTS order_items (
     FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE,
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT
 );
-
-INSERT INTO admins (username, password) VALUES ('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi');
 
 -- 配送方式默认全开，开放时间不填表示一直开放
 INSERT INTO settings (setting_key, setting_value) VALUES
