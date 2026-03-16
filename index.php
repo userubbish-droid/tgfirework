@@ -63,7 +63,9 @@ try {
             <div class="hero-slider" id="heroSlider">
                 <?php foreach ($homeBanners as $idx => $img): ?>
                     <div class="hero-slide<?php echo $idx === 0 ? ' active' : ''; ?>">
-                        <img src="<?php echo BASE_PATH . htmlspecialchars($img); ?>" alt="首页横幅" class="hero-banner">
+                        <div class="banner">
+                            <img src="<?php echo BASE_PATH . htmlspecialchars($img); ?>" alt="首页横幅" class="hero-banner">
+                        </div>
                     </div>
                 <?php endforeach; ?>
                 <?php if (count($homeBanners) > 1): ?>

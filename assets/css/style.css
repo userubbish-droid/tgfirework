@@ -82,15 +82,20 @@ main {
 .hero h1 { color: var(--dark); font-size: 2rem; margin-bottom: 0.5rem; }
 .hero p { color: #666; }
 
-/* 首页横幅：固定格子 600×400，图片填满裁剪 */
-.hero-banner {
+/* 固定尺寸横幅容器（类似 div.banner）：600×400，图片在容器内裁剪 */
+.banner {
     width: 600px;
     height: 400px;
     max-width: 100%;
-    border-radius: 12px;
-    display: block;
     margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+.hero-banner {
+    width: 100%;
+    height: 100%;
+    display: block;
     object-fit: cover;
 }
 
@@ -254,11 +259,10 @@ main {
     .hero {
         padding: 1.2rem 0 1.4rem;
     }
-    /* 手机端也固定格子：宽 100%，高 220px */
-    .hero-banner {
+    /* 手机端固定格子：容器 100%×220px */
+    .banner {
         width: 100%;
         height: 220px;
-        max-width: none;
     }
     .products-grid {
         grid-template-columns: 1fr 1fr;
