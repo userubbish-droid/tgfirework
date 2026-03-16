@@ -83,11 +83,14 @@ main {
 .hero p { color: #666; }
 
 .hero-banner {
+    width: 600px;
+    height: 400px;
     max-width: 100%;
     border-radius: 12px;
     display: block;
     margin: 0 auto;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    object-fit: cover;
 }
 
 /* 轮播容器与圆点 */
@@ -149,6 +152,34 @@ main {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    main {
+        padding: 1.2rem;
+        margin-top: 0.5rem;
+    }
+    .hero {
+        padding: 1.2rem 0 1.4rem;
+    }
+    .hero-banner {
+        width: 100%;
+        height: auto;
+        max-height: 260px;
+    }
+    .products-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .product-card {
