@@ -83,10 +83,9 @@ main {
 .hero p { color: #666; }
 
 .hero-banner {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    max-height: 260px;
+    width: 600px;
+    height: 400px;
+    max-width: 100%;
     border-radius: 12px;
     display: block;
     margin: 0 auto;
@@ -185,14 +184,14 @@ main {
 }
 .category-icon {
     display: block;
-    width: 72px;
-    height: 72px;
+    width: 70px;
+    height: 70px;
     margin: 0 auto 0.4rem;
     border-radius: 12px;
     overflow: hidden;
     background: #f5f5f5;
     font-size: 1.5rem;
-    line-height: 72px;
+    line-height: 70px;
     font-weight: bold;
     color: var(--primary);
 }
@@ -209,7 +208,7 @@ main {
 }
 .category-icon-all {
     font-size: 1rem;
-    line-height: 72px;
+    line-height: 70px;
 }
 .category-name-en {
     display: block;
@@ -255,6 +254,8 @@ main {
         padding: 1.2rem 0 1.4rem;
     }
     .hero-banner {
+        width: 100%;
+        height: auto;
         max-height: 220px;
     }
     .products-grid {
