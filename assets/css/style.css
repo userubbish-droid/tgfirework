@@ -74,7 +74,7 @@ input:focus, textarea:focus, select:focus { outline: none; box-shadow: var(--foc
 .site-header {
     background: linear-gradient(90deg, #8b0000 0%, #a52a2a 25%, #c41e3a 50%, #b8860b 100%);
     border-bottom: 3px solid var(--gold);
-    padding: 0.42rem 1.05rem;
+    padding: 0.15rem 0.95rem;
     position: sticky;
     top: 0;
     z-index: 100;
@@ -90,7 +90,7 @@ input:focus, textarea:focus, select:focus { outline: none; box-shadow: var(--foc
 }
 
 .site-logo {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     font-weight: bold;
     color: #fff;
     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
@@ -101,11 +101,11 @@ input:focus, textarea:focus, select:focus { outline: none; box-shadow: var(--foc
 .site-nav a {
     color: #fff;
     text-decoration: none;
-    margin-left: 0.75rem;
+    margin-left: 0.65rem;
     line-height: 1.2;
     font-weight: 600;
     opacity: 0.95;
-    font-size: 0.95rem;
+    font-size: 0.94rem;
 }
 .site-nav a:hover { color: var(--gold); }
 
@@ -114,7 +114,7 @@ input:focus, textarea:focus, select:focus { outline: none; box-shadow: var(--foc
     color: rgba(255,255,255,0.92);
     font-weight: 600;
     opacity: 0.95;
-    font-size: 0.95rem;
+    font-size: 0.94rem;
 }
 
 .site-nav .nav-badge {
@@ -134,7 +134,7 @@ input:focus, textarea:focus, select:focus { outline: none; box-shadow: var(--foc
 .cart-link {
     background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
     color: #1a0a0a !important;
-    padding: 0.22rem 0.65rem;
+    padding: 0.18rem 0.6rem;
     border-radius: 6px;
     font-weight: 600;
 }
