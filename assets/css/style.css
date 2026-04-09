@@ -160,7 +160,10 @@ main {
     border: 1px solid var(--border);
 }
 .hero.hero-has-banner {
-    padding: 0.9rem 0 1rem;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    margin-bottom: 1.25rem;
 }
 .hero h1 { color: var(--dark); font-size: 2rem; margin-bottom: 0.5rem; }
 .hero p { color: #666; }
@@ -174,6 +177,18 @@ main {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+/* 首页有横幅时：只展示图片，不要卡片边角 */
+.hero.hero-has-banner .banner {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+}
+.hero.hero-has-banner .hero-banner {
+    object-fit: cover;
 }
 .hero-banner {
     width: 100%;
