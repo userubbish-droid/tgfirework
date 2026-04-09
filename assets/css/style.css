@@ -82,10 +82,10 @@ main {
 .hero h1 { color: var(--dark); font-size: 2rem; margin-bottom: 0.5rem; }
 .hero p { color: #666; }
 
-/* 固定尺寸横幅容器（类似 div.banner）：400×400，图片在容器内裁剪 */
+/* 固定尺寸横幅容器（类似 div.banner）：200×200，图片在容器内裁剪 */
 .banner {
-    width: 400px;
-    height: 400px;
+    width: 200px;
+    height: 200px;
     max-width: 100%;
     margin: 0 auto;
     border-radius: 12px;
@@ -99,18 +99,24 @@ main {
     object-fit: cover;
 }
 
-/* 轮播容器与圆点 */
+/* 轮播容器：多张图叠在同一格，只显示当前一张，避免出现多个格子 */
 .hero-slider {
     position: relative;
     max-width: 100%;
     margin: 0 auto;
+    min-height: 200px;
 }
 
 .hero-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
     display: none;
 }
 .hero-slide.active {
     display: block;
+    position: relative;
 }
 
 .hero-dots {
@@ -259,10 +265,13 @@ main {
     .hero {
         padding: 1.2rem 0 1.4rem;
     }
-    /* 手机端固定格子：容器 100%×220px */
+    /* 手机端固定格子：宽 100%，高 200px */
     .banner {
         width: 100%;
-        height: 220px;
+        height: 200px;
+    }
+    .hero-slider {
+        min-height: 200px;
     }
     .products-grid {
         grid-template-columns: 1fr 1fr;
