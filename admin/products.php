@@ -8,11 +8,29 @@ if (!isset($_SESSION['admin_id'])) {
 $categories = $pdo->query("SELECT id, name FROM categories ORDER BY sort_order")->fetchAll();
 $action = $_GET['action'] ?? 'list';
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
+$flash = trim($_GET['msg'] ?? '');
+$flashError = trim($_GET['err'] ?? '');
 
 if ($action === 'delete' && $id) {
-    $pdo->prepare("DELETE FROM products WHERE id = ?")->execute([$id]);
-    header('Location: products.php');
-    exit;
+    try {
+        // 若商品已被订单引用（order_items 外键 RESTRICT），不能硬删；改为下架并给提示，避免 500
+        $stmt = $pdo->prepare("SELECT COUNT(*) FROM order_items WHERE product_id = ?");
+        $stmt->execute([$id]);
+        $refCount = (int)$stmt->fetchColumn();
+
+        if ($refCount > 0) {
+            $pdo->prepare("UPDATE products SET is_active = 0 WHERE id = ?")->execute([$id]);
+            header('Location: products.php?msg=' . urlencode('该商品已有订单记录，已自动下架（为保证订单历史，不能删除）。'));
+            exit;
+        }
+
+        $pdo->prepare("DELETE FROM products WHERE id = ?")->execute([$id]);
+        header('Location: products.php?msg=' . urlencode('删除成功'));
+        exit;
+    } catch (Exception $e) {
+        header('Location: products.php?err=' . urlencode('删除失败：' . $e->getMessage()));
+        exit;
+    }
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'add' || $action === 'edit')) {
@@ -118,6 +136,12 @@ $products = $pdo->query("SELECT p.*, c.name AS category_name FROM products p LEF
             <h2>商品管理</h2>
             <a href="?action=add" class="btn btn-primary btn-sm">添加商品</a>
         </div>
+        <?php if ($flash): ?>
+            <div class="alert alert-success"><?php echo htmlspecialchars($flash); ?></div>
+        <?php endif; ?>
+        <?php if ($flashError): ?>
+            <div class="alert alert-error"><?php echo htmlspecialchars($flashError); ?></div>
+        <?php endif; ?>
         <?php if ($action === 'add' || $action === 'edit'): ?>
         <div class="admin-card">
             <h3><?php echo $action === 'add' ? '添加商品' : '编辑商品'; ?></h3>
