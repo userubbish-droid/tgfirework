@@ -9,10 +9,11 @@
 .login-box {
     background: #fff;
     padding: 2.5rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    border-radius: 14px;
+    box-shadow: 0 14px 50px rgba(0,0,0,0.30);
     max-width: 380px;
     width: 100%;
+    border: 1px solid rgba(255,255,255,0.12);
 }
 .login-box h1 { text-align: center; margin-bottom: 0.3rem; color: #1a1a2e; }
 .login-desc { text-align: center; color: #666; margin-bottom: 1.5rem; font-size: 0.9rem; }
@@ -23,19 +24,23 @@
 .admin-layout { display: flex; min-height: 100vh; background: #f0f2f5; }
 .admin-sidebar {
     width: 220px;
-    background: #1a1a2e;
+    background: linear-gradient(180deg, #141427 0%, #101022 100%);
     color: #fff;
     padding: 1.5rem 0;
+    box-shadow: 6px 0 22px rgba(0,0,0,0.12);
 }
 .admin-sidebar a {
     display: block;
-    padding: 0.7rem 1.5rem;
+    padding: 0.72rem 1.25rem;
     color: rgba(255,255,255,0.85);
     text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 .admin-sidebar a:hover, .admin-sidebar a.active {
     background: rgba(196,30,58,0.3);
     color: #fff;
+    border-left-color: rgba(212,175,55,0.9);
 }
 .admin-sidebar .brand {
     padding: 0 1.5rem 1rem;
@@ -43,8 +48,9 @@
     color: #d4af37;
     border-bottom: 1px solid rgba(255,255,255,0.1);
     margin-bottom: 0.5rem;
+    letter-spacing: 0.3px;
 }
-.admin-main { flex: 1; padding: 1.5rem 2rem; overflow: auto; }
+.admin-main { flex: 1; padding: 1.75rem 2rem; overflow: auto; }
 .admin-header {
     display: flex;
     justify-content: space-between;
@@ -56,15 +62,16 @@
 .admin-header h2 { color: #1a1a2e; font-size: 1.4rem; }
 .admin-card {
     background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 14px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.08);
     padding: 1.5rem;
     margin-bottom: 1.5rem;
+    border: 1px solid rgba(0,0,0,0.04);
 }
 .admin-table { width: 100%; border-collapse: collapse; }
-.admin-table th, .admin-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #eee; }
-.admin-table th { background: #fafafa; font-weight: 600; }
-.admin-table tr:hover td { background: #f9f9f9; }
+.admin-table th, .admin-table td { padding: 0.85rem 1rem; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.admin-table th { background: rgba(0,0,0,0.03); font-weight: 800; color: #1a1a2e; }
+.admin-table tr:hover td { background: rgba(212,175,55,0.06); }
 .admin-badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.85rem; }
 .admin-badge.pending { background: #fff3cd; color: #856404; }
 .admin-badge.paid { background: #cce5ff; color: #004085; }
@@ -78,9 +85,17 @@
     background: linear-gradient(135deg, #c41e3a 0%, #9a1830 100%);
     color: #fff;
     padding: 1.25rem;
-    border-radius: 8px;
+    border-radius: 14px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.12);
+    border: 1px solid rgba(255,255,255,0.08);
 }
 .stat-card.gold { background: linear-gradient(135deg, #d4af37 0%, #b8960c 100%); }
 .stat-card h3 { font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.3rem; }
 .stat-card .num { font-size: 1.8rem; font-weight: bold; }
 .admin-card select { width: 100%; padding: 0.6rem; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
+
+/* 让后台里的“查看订单/注册审核”等灰按钮也更统一 */
+.admin-card .btn[style*="background:#eee"] {
+    background: rgba(0,0,0,0.04) !important;
+    border: 1px solid rgba(0,0,0,0.06);
+}

@@ -5,17 +5,71 @@
     --gold: #d4af37;
     --gold-dark: #b8860b;
     --dark: #2d0a0a;
+    --bg-paper: rgba(255,248,240,0.98);
+    --border: rgba(184,134,11,0.22);
+    --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+    --shadow-md: 0 10px 30px rgba(0,0,0,0.16);
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --focus: 0 0 0 3px rgba(212,175,55,0.25);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     background: linear-gradient(145deg, #2d0a0a 0%, #5c1a1a 35%, #8b2500 70%, #1a0a0a 100%);
     color: #333;
     min-height: 100vh;
     line-height: 1.6;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 1.75rem; }
+
+main h1, main h2, main h3 { color: var(--dark); letter-spacing: 0.2px; }
+main h2 { font-size: 1.4rem; margin-bottom: 1rem; }
+
+a { color: inherit; }
+
+.btn {
+    padding: 0.65rem 1.25rem;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.98rem;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    background: rgba(255,255,255,0.8);
+    color: #222;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+    user-select: none;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.btn:active { transform: translateY(0); box-shadow: 0 1px 0 rgba(0,0,0,0.03); }
+.btn:focus { outline: none; }
+.btn:focus-visible { box-shadow: var(--focus), var(--shadow-sm); }
+.btn:disabled, .btn[disabled] { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-primary {
+    background: linear-gradient(180deg, #c41e3a 0%, #8b0000 100%);
+    color: #fff;
+    border-color: rgba(0,0,0,0.08);
+}
+.btn-primary:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); }
+
+button { font-family: inherit; }
+input, textarea, select {
+    font-family: inherit;
+}
+input:focus, textarea:focus, select:focus { outline: none; box-shadow: var(--focus); border-color: rgba(212,175,55,0.65) !important; }
 
 .site-header {
     background: linear-gradient(90deg, #8b0000 0%, #a52a2a 25%, #c41e3a 50%, #b8860b 100%);
@@ -49,8 +103,31 @@ body {
     text-decoration: none;
     margin-left: 1rem;
     line-height: 1.2;
+    font-weight: 600;
+    opacity: 0.95;
 }
 .site-nav a:hover { color: var(--gold); }
+
+.site-nav .nav-user {
+    margin-left: 1rem;
+    color: rgba(255,255,255,0.92);
+    font-weight: 600;
+    opacity: 0.95;
+}
+
+.site-nav .nav-badge {
+    margin-left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    color: #1a0a0a;
+    background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+}
 
 .cart-link {
     background: linear-gradient(180deg, var(--gold) 0%, var(--gold-dark) 100%);
@@ -61,25 +138,23 @@ body {
 }
 .cart-link:hover { background: linear-gradient(180deg, #e6c04a 0%, var(--gold) 100%); color: #1a0a0a !important; }
 
-.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-
 main {
     min-height: 60vh;
-    background: linear-gradient(180deg, rgba(255,248,240,0.98) 0%, rgba(255,245,230,0.98) 100%);
-    border-radius: 12px;
+    background: linear-gradient(180deg, var(--bg-paper) 0%, rgba(255,245,230,0.98) 100%);
+    border-radius: var(--radius-md);
     padding: 2rem;
     margin-top: 1rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(212,175,55,0.15);
-    border: 1px solid rgba(184,134,11,0.2);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.22), inset 0 1px 0 rgba(212,175,55,0.12);
+    border: 1px solid var(--border);
 }
 
 .hero {
     text-align: center;
     padding: 2rem 0 2.5rem;
     background: linear-gradient(180deg, rgba(196,30,58,0.12) 0%, rgba(212,175,55,0.08) 50%, transparent 100%);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     margin-bottom: 2rem;
-    border: 1px solid rgba(184,134,11,0.2);
+    border: 1px solid var(--border);
 }
 .hero h1 { color: var(--dark); font-size: 2rem; margin-bottom: 0.5rem; }
 .hero p { color: #666; }
@@ -182,15 +257,18 @@ main {
     text-align: center;
     text-decoration: none;
     color: #333;
-    border-radius: 12px;
+    border-radius: 14px;
     padding: 0.6rem;
     background: #fff;
     border: 2px solid transparent;
-    transition: border-color 0.2s, background 0.2s;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.2s, background 0.2s;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03);
 }
 .category-card:hover {
     border-color: rgba(212,175,55,0.6);
     background: #fffef8;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
 }
 .category-card.active {
     border-color: var(--primary);
@@ -289,14 +367,15 @@ main {
 
 .product-card {
     background: #fff;
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    border: 1px solid rgba(0,0,0,0.04);
 }
 .product-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    box-shadow: var(--shadow-md);
 }
 
 .product-card img {
@@ -319,8 +398,11 @@ main {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
-.product-card .btn-add:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); }
+.product-card .btn-add:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); transform: translateY(-1px); box-shadow: 0 8px 18px rgba(0,0,0,0.16); }
 .product-card .btn-add:disabled { background: #999; cursor: not-allowed; }
 
 .product-detail {
@@ -361,11 +443,22 @@ main {
 .btn-buy:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); }
 
 .cart-table { width: 100%; border-collapse: collapse; }
-.cart-table th, .cart-table td { padding: 1rem; border-bottom: 1px solid #eee; text-align: left; }
-.cart-table th { background: #f5f5f5; font-weight: 600; }
+.cart-table th, .cart-table td { padding: 0.9rem 1rem; border-bottom: 1px solid rgba(0,0,0,0.06); text-align: left; }
+.cart-table th { background: rgba(0,0,0,0.03); font-weight: 700; color: #222; }
+.cart-table tr:hover td { background: rgba(212,175,55,0.06); }
 .cart-total { text-align: right; margin-top: 1.5rem; font-size: 1.2rem; }
 .cart-total strong { color: var(--primary); }
 .cart-empty { text-align: center; padding: 3rem; color: #888; }
+.cart-table button {
+    padding: 0.45rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.85);
+    cursor: pointer;
+    font-weight: 600;
+}
+.cart-table button:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.cart-table button:focus-visible { box-shadow: var(--focus), var(--shadow-sm); }
 
 .form-group { margin-bottom: 1rem; }
 .form-group label { display: block; margin-bottom: 0.3rem; font-weight: 500; }
@@ -374,19 +467,14 @@ main {
     width: 100%;
     padding: 0.6rem;
     border: 1px solid #ddd;
-    border-radius: 6px;
+    border-radius: 10px;
     font-size: 1rem;
+    background: rgba(255,255,255,0.9);
 }
 .form-group textarea { min-height: 100px; resize: vertical; }
 
 .btn {
-    padding: 0.6rem 1.5rem;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1rem;
-    text-decoration: none;
-    display: inline-block;
+    /* 前面已统一定义，这里保留兼容旧结构 */
 }
 .btn-primary { background: linear-gradient(180deg, #c41e3a 0%, #8b0000 100%); color: #fff; }
 .btn-primary:hover { background: linear-gradient(180deg, #d42a48 0%, #a52a2a 100%); }
