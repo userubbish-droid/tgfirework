@@ -5,7 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) : htmlspecialchars(t('site.name')); ?></title>
-    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/style.css">
+    <?php $styleVer = @filemtime(__DIR__ . '/../assets/css/style.css') ?: time(); ?>
+    <link rel="stylesheet" href="<?php echo BASE_PATH; ?>assets/css/style.css?v=<?php echo (int)$styleVer; ?>">
 </head>
 <body>
 <header class="site-header">
