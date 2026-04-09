@@ -59,7 +59,7 @@ try {
 ?>
 
 <main>
-    <div class="hero">
+    <div class="hero<?php echo !empty($homeBanners) ? ' hero-has-banner' : ''; ?>">
         <?php if (!empty($homeBanners)): ?>
             <div class="hero-slider" id="heroSlider">
                 <?php foreach ($homeBanners as $idx => $img): ?>

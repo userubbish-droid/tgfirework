@@ -159,6 +159,9 @@ main {
     margin-bottom: 2rem;
     border: 1px solid var(--border);
 }
+.hero.hero-has-banner {
+    padding: 0.9rem 0 1rem;
+}
 .hero h1 { color: var(--dark); font-size: 2rem; margin-bottom: 0.5rem; }
 .hero p { color: #666; }
 
@@ -184,19 +187,14 @@ main {
     position: relative;
     max-width: 100%;
     margin: 0 auto;
-    min-height: 200px;
+    min-height: 0;
 }
 
 .hero-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
     display: none;
 }
 .hero-slide.active {
     display: block;
-    position: relative;
 }
 
 .hero-dots {
