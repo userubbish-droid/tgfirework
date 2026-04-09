@@ -188,7 +188,9 @@ main {
     box-shadow: none;
 }
 .hero.hero-has-banner .hero-banner {
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center center;
+    background: rgba(255,255,255,0.0);
 }
 .hero-banner {
     width: 100%;
