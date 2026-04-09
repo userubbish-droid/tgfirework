@@ -1,6 +1,7 @@
 <?php 
 require_once 'config.php';
 session_start();
+require_once __DIR__ . '/includes/i18n.php';
 
 try {
     $catCols = $pdo->query("SHOW COLUMNS FROM categories")->fetchAll(PDO::FETCH_COLUMN);
@@ -44,7 +45,7 @@ if (!empty($products) && isset($_SESSION['customer_id'], $_SESSION['customer_rol
         }
     } catch (Exception $e) {}
 }
-$pageTitle = '首页 - 烟花网购';
+$pageTitle = (get_lang() === 'en' ? 'Home - ' : '首页 - ') . t('site.name');
 require_once 'includes/header.php';
 
 // 读取首页轮播横幅
@@ -77,8 +78,8 @@ try {
                 <?php endif; ?>
             </div>
         <?php else: ?>
-            <h1>烟花网购站</h1>
-            <p>安全合规 · 品质保证 · 送货上门</p>
+            <h1><?php echo htmlspecialchars(t('home.title')); ?></h1>
+            <p><?php echo htmlspecialchars(t('home.subtitle')); ?></p>
         <?php endif; ?>
     </div>
     <?php
@@ -116,7 +117,7 @@ try {
     <?php endif; ?>
     <div class="products-grid">
         <?php if (empty($products)): ?>
-            <p style="grid-column:1/-1; text-align:center; color:#888;">暂无商品</p>
+            <p style="grid-column:1/-1; text-align:center; color:#888;"><?php echo htmlspecialchars(t('home.empty')); ?></p>
         <?php else: ?>
             <?php foreach ($products as $p):
                 $isAgent = isset($_SESSION['customer_role']) && $_SESSION['customer_role'] === 'agent';
@@ -137,8 +138,8 @@ try {
                     <div class="info">
                         <div class="name"><?php echo htmlspecialchars($p['name']); ?></div>
                         <div class="price">¥ <?php echo number_format($priceDisplay, 2); ?></div>
-                        <div class="stock">库存 <?php echo $p['stock']; ?> 件</div>
-                        <button class="btn-add" onclick="addToCart(<?php echo $p['id']; ?>,'<?php echo htmlspecialchars(addslashes($p['name'])); ?>',<?php echo $priceDisplay; ?>)" <?php echo $p['stock']<1 ? ' disabled' : ''; ?>>加入购物车</button>
+                        <div class="stock"><?php echo htmlspecialchars(t('product.stock', ['n' => (int)$p['stock']])); ?></div>
+                        <button class="btn-add" onclick="addToCart(<?php echo $p['id']; ?>,'<?php echo htmlspecialchars(addslashes($p['name'])); ?>',<?php echo $priceDisplay; ?>)" <?php echo $p['stock']<1 ? ' disabled' : ''; ?>><?php echo htmlspecialchars(t('product.add_to_cart')); ?></button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -194,7 +195,7 @@ function addToCart(id,name,price){
     var i=cart.find(function(x){return x.id==id && (x.unit||'piece')==='piece';});
     if(i)i.quantity=(i.quantity||1)+1; else cart.push({id:id,name:name,price:price,quantity:1,unit:'piece'});
     localStorage.setItem('cart',JSON.stringify(cart));
-    alert('已加入购物车');
+    alert(<?php echo json_encode(t('common.added_to_cart')); ?>);
     document.getElementById('cartLink').innerHTML='购物车 ('+cart.reduce(function(s,x){return s+(x.quantity||1);},0)+')';
 }
 </script>
